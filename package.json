@@ -1,0 +1,9 @@
+{
+  "name": "pooja-balasubramanian-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio site for Pooja Balasubramanian",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

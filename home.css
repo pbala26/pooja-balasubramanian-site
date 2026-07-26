@@ -1,0 +1,583 @@
+/* ============================================================
+   HOME / LISTING STYLESHEET
+   ------------------------------------------------------------
+   Shared by index.html and the category listing pages
+   (writing.html, film.html, workshops.html). Two things live
+   here: the site chrome (grid, header, footer) and the card
+   system used to list articles (size L/M/S), plus the
+   category-intro block (header text + standfirst) used by the
+   three listing pages.
+   ============================================================ */
+
+/* ============================================================
+   TOKENS
+   ------------------------------------------------------------
+   --bg/--fg are set per data-category, at whichever element
+   carries the attribute. On <body> they drive the header and
+   category-intro colour. On an individual .card they're
+   re-declared locally, which overrides the inherited page-level
+   value only within that card — so one page (say, the Writing
+   listing, data-category="essay") can still show cards of other
+   categories with their own correct colours.
+   ============================================================ */
+:root {
+  --margin: 40px;
+  --gutter: 40px;
+  --cols: 10;
+}
+
+[data-category="essay"]        { --bg: #EB094B; --fg: #FFFFFF; --bg-tint: #FBCEDB; }
+[data-category="workshop"]     { --bg: #FF6D63; --fg: #1E1E1E; --bg-tint: #FFE2E0; }
+[data-category="exhibition-a"] { --bg: #1B3720; --fg: #FFFFFF; --bg-tint: #D1D7D2; }
+[data-category="exhibition-b"] { --bg: #BCBCF8; --fg: #1E1E1E; --bg-tint: #F2F2FE; }
+[data-category="exhibition-c"] { --bg: #FFE07D; --fg: #1E1E1E; --bg-tint: #FFF9E5; }
+[data-category="exhibition-d"] { --bg: #FF8D3C; --fg: #1E1E1E; --bg-tint: #FFE8D8; }
+[data-category="film"]         { --bg: #1E2A5C; --fg: #FFFFFF; --bg-tint: #D2D4DE; }
+[data-category="about"]        { --bg: #17181A; --fg: #FFFFFF; --bg-tint: #ECECEC; }
+
+/* On category listing pages, the header/intro band stays the
+   bold category colour, but the article-preview cards below use
+   the lighter 20%-tint version instead — same tint ratio as the
+   article-page body background. Homepage cards are unaffected
+   (they keep the full-strength colour set on each .card itself). */
+.category-page .card {
+  background: var(--bg-tint);
+  color: #1E1E1E;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  /* canvas colour — this is what bottom overscroll/rubber-band
+     reveals, so it matches the footer (the element every page
+     actually ends on). */
+  background: #17181A;
+}
+/* top overscroll needs the header's colour instead. The canvas
+   background above can only be one colour for the whole page, so
+   this is a second, fixed layer pinned to the viewport top — sat
+   behind the header at rest (hidden), only exposed when a rubber-
+   band bounce pulls the document down past y=0. */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 240px;
+  background: var(--bg);
+  z-index: -1;
+}
+
+body {
+  font-family: "Work Sans", sans-serif;
+  font-weight: 400;
+  line-height: normal;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: inherit; }
+
+/* ============================================================
+   8-COLUMN GRID — 1440 frame / 40 margin / 40 gutter.
+   This is the CONTENT boundary only — colour bands (header,
+   card) are full-bleed elements; .grid is the centred inner
+   wrapper that lays out their content.
+   ============================================================ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  column-gap: var(--gutter);
+  padding-inline: var(--margin);
+  max-width: 1440px;
+  margin-inline: auto;
+}
+
+/* ============================================================
+   HEADER — full-bleed colour band, grid applied to inner bar
+   ============================================================ */
+header {
+  background: var(--bg);
+  color: var(--fg);
+}
+header .bar {
+  align-items: baseline;
+  padding-block: 48px 30px;
+}
+
+/* decorative rule spanning the full content width, under the menu —
+   same marker—line—marker language as the card dividers */
+.menu-rule {
+  padding-block: 0 32px;
+}
+.menu-rule-line {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.menu-rule-line::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  order: 1;
+}
+.menu-rule-line .end {
+  width: 10px;
+  height: 10px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.menu-rule-line .end:first-child { order: 0; }
+.menu-rule-line .end:last-child  { order: 2; }
+.wordmark {
+  grid-column: 1 / span 5;
+  font-size: 32px;
+  font-weight: 500;
+  text-decoration: none;
+  color: inherit;
+}
+nav {
+  grid-column: 6 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 32px;
+}
+nav a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* ============================================================
+   CATEGORY INTRO — header text + standfirst, used by the
+   writing/film/workshops listing pages. Sits on the same
+   colour band as the header (both read var(--bg)/var(--fg)
+   from the data-category on <body>), so it reads as one
+   continuous coloured section.
+   ============================================================ */
+.category-intro {
+  background: var(--bg);
+  color: var(--fg);
+}
+.category-intro .grid { padding-block: 8px 72px; }
+.category-intro h1 {
+  grid-column: 1 / span 7;
+  font-size: clamp(32px, 4.5vw, 56px);
+  font-weight: 500;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+.category-intro .standfirst {
+  grid-column: 1 / span 6;
+  font-size: 20px;
+  line-height: 1.5;
+}
+/* text + photo sit in the same grid row so the photo can be
+   centred against the full h1+standfirst block, not just one
+   line of it — same left-text/right-image balance as the
+   article hero (.hero-text / .hero-image in article.css) */
+.category-intro .intro-text { grid-column: 1 / span 7; align-self: center; }
+/* circular portrait placeholder — same "bordered box + caption"
+   language as .thumb/.hero-image, fixed size so it reads as a
+   portrait rather than stretching to fill the column */
+.cv-photo {
+  grid-column: 8 / -1;
+  justify-self: end;
+  align-self: center;
+  width: 280px;
+  height: 280px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  text-align: center;
+  padding: 12px;
+}
+
+/* ============================================================
+   SUBCATEGORY GROUPS — used on the Writing listing page to
+   split Academic Articles / Essays / Op-Eds into their own
+   labelled sections. Shares the page's --bg-tint so it reads
+   as one continuous light band with the cards inside it.
+   ============================================================ */
+.subcategory {
+  background: var(--bg-tint);
+  color: #1E1E1E;
+}
+.subcategory .grid { padding-block: 32px 0; }
+.subcategory-heading {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2.8px;
+  text-transform: uppercase;
+  opacity: 0.55;
+  padding-bottom: 16px;
+  border-bottom: 1px solid currentColor;
+}
+.subcategory-empty {
+  grid-column: 3 / -1;
+  padding-block: 24px 40px;
+  font-size: 15px;
+  font-style: italic;
+  opacity: 0.55;
+}
+/* ============================================================
+   ABOUT / CV PAGE
+   ------------------------------------------------------------
+   True two-column CV layout, matching the reference: a narrow
+   fact sidebar (Contact, Languages, Education, Key skills,
+   Tools) beside a wide Selected Work column. Both sit in the
+   same .grid row — sidebar cols 1-2, main cols 4-8 — leaving
+   col 3 empty as a full-column gap between them. Uses the
+   site's existing --cols/--gutter/--margin grid, just a column
+   split this page needed that no other page has used.
+   ============================================================ */
+.cv-body { background: var(--bg-tint); color: #1E1E1E; }
+.cv-body .grid { padding-block: 72px 120px; align-items: start; }
+
+.cv-sidebar { grid-column: 1 / span 2; }
+.cv-fact { margin-bottom: 40px; }
+/* small grey label — same treatment as .subcategory-heading / .meta
+   elsewhere on the site: uppercase, letter-spaced, muted via opacity */
+.cv-fact h3 {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2.8px;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-bottom: 12px;
+}
+.cv-fact ul { list-style: none; }
+.cv-fact li { font-size: 15px; line-height: 1.4; }
+.cv-fact li + li { margin-top: 6px; }
+/* dated, multi-line entries (e.g. Education) need more breathing
+   room between them than short single-line facts do */
+.cv-fact li:has(.cv-fact-years) + li { margin-top: 20px; }
+.cv-fact a { color: inherit; text-decoration: none; }
+.cv-fact a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.cv-fact-years { display: block; font-size: 13px; opacity: 0.55; margin-bottom: 4px; }
+
+/* main column carries a vertical rule down its left edge, centred
+   in the 40px gutter — the vertical counterpart of the site's
+   horizontal marker–line–marker .rule, sized to the column's own
+   content height rather than a fixed or full-page length */
+.cv-main { grid-column: 4 / span 5; position: relative; }
+.cv-main h2 { font-size: 32px; font-weight: 500; margin-top: 64px; margin-bottom: 40px; }
+.cv-main h2:first-of-type { margin-top: 0; }
+
+.cv-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -95px;
+  width: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.cv-divider::after {
+  content: "";
+  flex: 1;
+  width: 1px;
+  background: currentColor;
+  opacity: 0.35;
+  order: 1;
+}
+.cv-divider .end {
+  width: 10px;
+  height: 10px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cv-divider .end:first-child { order: 0; }
+.cv-divider .end:last-child  { order: 2; }
+
+.cv-job { margin-bottom: 24px; }
+.cv-job-years { font-size: 12px; opacity: 0.55; margin-bottom: 8px; }
+.cv-job h3 { font-size: 22px; font-weight: 500; margin-bottom: 16px; }
+.cv-job p { font-size: 14px; line-height: 1.6; }
+.cv-job a { color: #EB094B; font-weight: 500; text-decoration: none; }
+.cv-job a:hover { text-decoration: underline; }
+
+/* publications — same column, but as a compact reading-list rather
+   than the large cv-job role headers above */
+.cv-main h2 + .cv-pub-heading { margin-top: 0; }
+.cv-pub-heading {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2.8px;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin: 40px 0 16px;
+}
+.cv-pub-list {
+  list-style: none;
+  margin-bottom: 8px;
+}
+.cv-pub-list li {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.cv-pub-list a { color: #EB094B; font-weight: 500; text-decoration: none; }
+.cv-pub-list a:hover { text-decoration: underline; }
+
+/* ============================================================
+   CARD — full-bleed colour band (the <article>). The grid is
+   applied to the inner <a class="card-link grid"> so the 1440px
+   boundary only constrains content, not the colour.
+   Colour comes from data-category on the <article>.
+   ============================================================ */
+.card { background: var(--bg); color: var(--fg); }
+
+/* A feint rule marks the seam only when two stacked cards share
+   the exact same category colour — otherwise the colour change
+   itself is enough of a divider. Uses each card's own --fg at low
+   opacity so it reads correctly on both light and dark colours. */
+.card[data-category="essay"]        + .card[data-category="essay"],
+.card[data-category="workshop"]     + .card[data-category="workshop"],
+.card[data-category="exhibition-a"] + .card[data-category="exhibition-a"],
+.card[data-category="exhibition-b"] + .card[data-category="exhibition-b"],
+.card[data-category="exhibition-c"] + .card[data-category="exhibition-c"],
+.card[data-category="exhibition-d"] + .card[data-category="exhibition-d"],
+.card[data-category="film"]         + .card[data-category="film"] {
+  border-top: 1px solid color-mix(in srgb, var(--fg) 25%, transparent);
+}
+
+.card a.card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* --- pill label, always column 1 --- */
+.pill {
+  grid-column: 1 / span 2;
+  justify-self: start;
+  align-self: start;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+/* lighter backgrounds get a heavier 2px pill border, per Figma */
+.card[data-category="exhibition-b"] .pill,
+.card[data-category="exhibition-c"] .pill,
+.card[data-category="exhibition-d"] .pill {
+  border-width: 2px;
+}
+/* on category-listing pages every card uses the light --bg-tint
+   colour (not just b/c/d), so all pills need the same heavier
+   stroke — otherwise exhibition-a's pill looks thinner than its
+   neighbours purely because it wasn't light on the homepage. */
+body.category-page .card .pill {
+  border-width: 1px;
+}
+
+/* --- text block --- */
+.card h2 {
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+.sub {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.meta {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2.8px;
+  text-transform: uppercase;
+}
+
+/* --- decorative rule: marker — line — marker --- */
+.rule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(295px, 100%);
+  margin-block: 40px;
+}
+.rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  order: 1;
+}
+.rule .end {
+  width: 10px;
+  height: 10px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.rule .end:first-child { order: 0; }
+.rule .end:last-child  { order: 2; }
+/* essay swaps the small circle markers for a larger sparkle */
+.card[data-category="essay"] .rule { width: min(277px, 100%); }
+.card[data-category="essay"] .rule .end {
+  width: 24px;
+  height: 24px;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card[data-category="essay"] .rule .end::before { content: "✳"; }
+
+/* --- image placeholder --- */
+.thumb {
+  border: 1px solid currentColor;
+  align-self: start;
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+}
+/* the border only marks an *empty* preview slot — once a real image
+   fills it, the frame reads as a photo, not a placeholder */
+.thumb.has-image {
+  border: none;
+}
+
+/* ============================================================
+   SIZE L — essay / workshop rows (40px title). 10-col grid,
+   pill:text:thumb = 2:4:4
+   ============================================================ */
+.size-l { padding-block: 64px; }
+.size-l .text  { grid-column: 3 / span 4; }
+.size-l .thumb { grid-column: 7 / -1; }
+.size-l h2 { font-size: 40px; }
+
+/* ============================================================
+   SIZE M — rows with image (30px title). 10-col grid,
+   pill:text = 2:5, thumb pinned to the right margin
+   ============================================================ */
+.size-m { padding-block: 64px; }
+.size-m .text  { grid-column: 3 / span 5; }
+.size-m .thumb {
+  grid-column: 8 / -1;
+  justify-self: end;
+  width: 242px;
+}
+.size-m h2 { font-size: 30px; }
+.size-m .sub { font-size: 19px; margin-bottom: 16px; }
+
+/* ============================================================
+   SIZE S — compact rows: title + meta only, no image
+   ============================================================ */
+.size-s { padding-block: 64px; }
+.size-s .text { grid-column: 3 / -1; }
+.size-s h2 { font-size: 36px; margin-bottom: 32px; }
+
+/* subtle hover, keyboard focus */
+.card-link:focus-visible { outline: 2px solid currentColor; outline-offset: -8px; }
+.card-link:hover h2 { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+
+/* ============================================================
+   FOOTER — off-black, wordmark + vertical nav + social icons,
+   copyright line below a hairline rule
+   ============================================================ */
+footer {
+  margin-top: auto;
+  background: #17181A;
+  color: #FFFFFF;
+}
+footer .footer-top { padding-block: 64px 48px; align-items: start; }
+footer .footer-nav {
+  grid-column: 6 / span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+footer .footer-nav a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+footer .footer-nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+footer .social {
+  grid-column: 9 / -1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 12px;
+}
+footer .icon {
+  width: 38px;
+  height: 38px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+footer .icon:hover { opacity: 0.7; }
+footer .icon svg { width: 16px; height: 16px; }
+footer .footer-bottom {
+  padding-block: 24px 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+footer .copyright {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  opacity: 0.55;
+}
+
+/* ============================================================
+   RESPONSIVE — stack below tablet
+   ============================================================ */
+@media (max-width: 900px) {
+  :root { --margin: 20px; --gutter: 20px; }
+  nav { gap: 24px; }
+  .wordmark { grid-column: 1 / -1; margin-bottom: 20px; }
+  nav { grid-column: 1 / -1; justify-content: flex-start; flex-wrap: wrap; }
+  .category-intro h1,
+  .category-intro .standfirst,
+  .category-intro .intro-text {
+    grid-column: 1 / -1;
+  }
+  .cv-photo { grid-column: 1 / -1; justify-self: start; margin-top: 24px; }
+  .pill  { grid-column: 1 / -1; margin-bottom: 28px; }
+  .size-l .text, .size-m .text, .size-s .text { grid-column: 1 / -1; }
+  .size-l .thumb, .size-m .thumb { grid-column: 1 / span 5; justify-self: start; width: auto; margin-top: 32px; }
+  .cv-sidebar, .cv-main { grid-column: 1 / -1; }
+  .cv-main { margin-top: 56px; }
+  .cv-divider { display: none; }
+  footer .footer-nav,
+  footer .social {
+    grid-column: 1 / -1;
+  }
+  footer .wordmark { margin-bottom: 24px; }
+  footer .footer-nav { flex-direction: row; flex-wrap: wrap; gap: 20px; margin-bottom: 24px; }
+  footer .social { justify-content: flex-start; }
+}
