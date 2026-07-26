@@ -4,31 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Writing — Pooja Balasubramanian</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- @include font-links.html -->
 <link rel="stylesheet" href="home.css">
 </head>
 <body data-category="essay" class="category-page">
 
-<header>
-  <div class="bar grid">
-    <a class="wordmark" href="index.html">Pooja Balasubramanian</a>
-    <nav>
-      <a href="writing.html">Writing</a>
-      <a href="film.html">Film</a>
-      <a href="exhibitions.html">Exhibition</a>
-      <a href="teaching.html">Teaching</a>
-      <a href="about-cv.html">About/CV</a>
-    </nav>
-  </div>
-  <div class="menu-rule grid">
-    <div class="menu-rule-line">
-      <span class="end"></span>
-      <span class="end"></span>
-    </div>
-  </div>
-</header>
+<!-- @include header.html -->
 
 <section class="category-intro">
   <div class="grid">
@@ -37,8 +18,27 @@
   </div>
 </section>
 
+<nav class="quick-nav" aria-label="Jump to section">
+  <div class="grid">
+    <div class="quick-nav-links">
+      <a class="quick-nav-link" href="#op-eds">
+        <svg class="quick-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"/><polyline points="17 7 17 17 7 17"/></svg>
+        Op-Eds
+      </a>
+      <a class="quick-nav-link" href="#essays">
+        <svg class="quick-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"/><polyline points="17 7 17 17 7 17"/></svg>
+        Essays
+      </a>
+      <a class="quick-nav-link" href="#academic-articles">
+        <svg class="quick-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"/><polyline points="17 7 17 17 7 17"/></svg>
+        Academic Articles
+      </a>
+    </div>
+  </div>
+</nav>
+
 <!-- OP-EDS -->
-<section class="subcategory">
+<section class="subcategory" id="op-eds">
   <div class="grid">
     <h3 class="subcategory-heading">Op-Eds</h3>
   </div>
@@ -81,7 +81,7 @@
 </article>
 
 <!-- ESSAYS -->
-<section class="subcategory">
+<section class="subcategory" id="essays">
   <div class="grid">
     <h3 class="subcategory-heading">Essays</h3>
   </div>
@@ -100,7 +100,7 @@
 </article>
 
 <!-- ACADEMIC ARTICLES -->
-<section class="subcategory">
+<section class="subcategory" id="academic-articles">
   <div class="grid">
     <h3 class="subcategory-heading">Academic Articles</h3>
   </div>
@@ -166,32 +166,8 @@
   </a>
 </article>
 
-<footer>
-  <div class="grid footer-top">
-    <a class="wordmark" href="index.html">Pooja Balasubramanian</a>
-    <nav class="footer-nav">
-      <a href="writing.html">Writing</a>
-      <a href="film.html">Film</a>
-      <a href="exhibitions.html">Exhibition</a>
-      <a href="teaching.html">Teaching</a>
-      <a href="about-cv.html">About/CV</a>
-    </nav>
-    <div class="social">
-      <a class="icon" href="#" aria-label="Substack" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="3"/><rect x="4" y="9" width="16" height="3"/><rect x="4" y="14" width="10" height="7"/></svg>
-      </a>
-      <a class="icon" href="#" aria-label="Instagram" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-      </a>
-      <a class="icon" href="#" aria-label="Email" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
-      </a>
-    </div>
-  </div>
-  <div class="grid footer-bottom">
-    <p class="copyright">&copy; 2026 Pooja Balasubramanian. All rights reserved.</p>
-  </div>
-</footer>
+<!-- @include footer.html -->
 
+<script src="quick-nav.js" defer></script>
 </body>
 </html>

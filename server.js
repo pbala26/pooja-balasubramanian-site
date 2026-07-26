@@ -3,7 +3,12 @@ const fs = require("fs");
 const path = require("path");
 
 const PORT = process.env.PORT || 3001;
-const ROOT = __dirname;
+// Serves the built site, not the source — the source pages contain
+// @include markers (header/footer/font-links partials) that only
+// build.js resolves. Run `npm start` (build.js runs first) rather
+// than `node server.js` directly, or the partials will show up
+// literally as HTML comments.
+const ROOT = path.join(__dirname, "dist");
 
 const MIME = {
   ".html": "text/html; charset=utf-8",

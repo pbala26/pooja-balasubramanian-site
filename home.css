@@ -159,6 +159,65 @@ nav a {
 nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
 /* ============================================================
+   QUICK-NAV — sits just below the hero, left-aligned, on the
+   page's tint colour (same background as .subcategory/.cv-body,
+   so it reads as a continuation of that band rather than its
+   own strip). Pills are bordered in the page's full accent
+   colour (var(--bg)) — the same "outlined chip on tint" language
+   as .pill elsewhere — each with a diagonal jump arrow (not a
+   chevron, so it doesn't read as a dropdown trigger). Smooth-
+   scrolls to a section id further down the page via quick-nav.js.
+   Only used on pages with enough distinct sections to be worth
+   jumping between (Writing's Op-Eds/Essays/Academic Articles,
+   the CV's Career/Publications).
+   ============================================================ */
+.quick-nav {
+  /* reset the bare `nav { display:flex; justify-content:flex-end }`
+     rule above (meant for the header's nav) — without this, this
+     nav's flex context + .grid's auto margins center the whole
+     block instead of letting it sit as a normal full-width band */
+  display: block;
+  background: var(--bg-tint);
+}
+.quick-nav .grid { padding-block: 28px 4px; }
+.quick-nav-links {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 12px;
+}
+.quick-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--bg);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--bg);
+  transition: background-color 0.15s ease;
+}
+.quick-nav-link:hover,
+.quick-nav-link:focus-visible {
+  background: color-mix(in srgb, var(--bg) 12%, transparent);
+}
+.quick-nav-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.quick-nav-link:hover .quick-nav-icon,
+.quick-nav-link:focus-visible .quick-nav-icon {
+  transform: translate(2px, 2px);
+}
+
+/* ============================================================
    CATEGORY INTRO — header text + standfirst, used by the
    writing/film/workshops listing pages. Sits on the same
    colour band as the header (both read var(--bg)/var(--fg)
@@ -219,6 +278,7 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .subcategory {
   background: var(--bg-tint);
   color: #1E1E1E;
+  scroll-margin-top: 32px;
 }
 .subcategory .grid { padding-block: 32px 0; }
 .subcategory-heading {
@@ -279,7 +339,7 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
    horizontal marker–line–marker .rule, sized to the column's own
    content height rather than a fixed or full-page length */
 .cv-main { grid-column: 4 / span 5; position: relative; }
-.cv-main h2 { font-size: 32px; font-weight: 500; margin-top: 64px; margin-bottom: 40px; }
+.cv-main h2 { font-size: 32px; font-weight: 500; margin-top: 64px; margin-bottom: 40px; scroll-margin-top: 32px; }
 .cv-main h2:first-of-type { margin-top: 0; }
 
 .cv-divider {

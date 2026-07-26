@@ -4,6 +4,7 @@
   "private": true,
   "description": "Portfolio site for Pooja Balasubramanian",
   "scripts": {
-    "start": "node server.js"
+    "build": "node build.js",
+    "start": "npm run build && node server.js"
   }
 }
