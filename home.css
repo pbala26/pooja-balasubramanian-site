@@ -24,16 +24,50 @@
   --margin: 40px;
   --gutter: 40px;
   --cols: 10;
+
+  /* Homepage hero-diagram accents only. [data-category] scopes --bg to
+     whichever ONE category the current page carries, so it can't supply
+     9 simultaneous colours for the hero word-map — these re-expose the
+     5 locked category hexes as standalone tokens (same alias pattern as
+     article.css's --chart-1..6) and add 4 more drawn from the P.Franco
+     poster reference, since 5 isn't enough nodes' worth of colour. Not
+     for reuse outside .hero-node — cards/pills/chips keep reading
+     var(--bg) as normal. */
+  --hero-wine: #870A2F;
+  --hero-green: #1B3720;
+  --hero-ochre: #FF8D3C;
+  --hero-orange: #FF564B;
+  --hero-purple: #24105D;
+  --hero-yellow: #F4C744;
+  --hero-sky: #A9D6E5;
+  --hero-lavender: #C9B6E4;
+  --hero-peach: #F6C1A4;
 }
 
-[data-category="essay"]        { --bg: #EB094B; --fg: #FFFFFF; --bg-tint: #FBCEDB; }
-[data-category="workshop"]     { --bg: #FF6D63; --fg: #1E1E1E; --bg-tint: #FFE2E0; }
-[data-category="exhibition-a"] { --bg: #1B3720; --fg: #FFFFFF; --bg-tint: #D1D7D2; }
-[data-category="exhibition-b"] { --bg: #BCBCF8; --fg: #1E1E1E; --bg-tint: #F2F2FE; }
-[data-category="exhibition-c"] { --bg: #FFE07D; --fg: #1E1E1E; --bg-tint: #FFF9E5; }
-[data-category="exhibition-d"] { --bg: #FF8D3C; --fg: #1E1E1E; --bg-tint: #FFE8D8; }
-[data-category="film"]         { --bg: #1E2A5C; --fg: #FFFFFF; --bg-tint: #D2D4DE; }
-[data-category="about"]        { --bg: #17181A; --fg: #FFFFFF; --bg-tint: #ECECEC; }
+/* Locked site tokens (2026-07-26) — Writing=Wine, Education=Green,
+   Exhibition=Ochre, Film=Orange, About/CV=Purple. --bg-tint is each
+   --bg at the site's standard 20% tint (bg*0.2 + white*0.8), same
+   formula as before. Nav/display label is "Education" (renamed from
+   "Teaching" 2026-07-30) — the underlying data-category value stays
+   "workshop", unchanged, since that's an internal key, not display text. */
+[data-category="essay"]      { --bg: #870A2F; --fg: #FFFFFF; --bg-tint: #E7CED5; } /* Writing — Wine */
+[data-category="workshop"]   { --bg: #1B3720; --fg: #FFFFFF; --bg-tint: #D1D7D2; } /* Education — Green */
+[data-category="exhibition"] { --bg: #FF8D3C; --fg: #1E1E1E; --bg-tint: #FFE8D8; } /* Exhibition — Ochre */
+[data-category="film"]       { --bg: #FF564B; --fg: #1E1E1E; --bg-tint: #FFDDDB; } /* Film — Orange */
+[data-category="about"]      { --bg: #24105D; --fg: #FFFFFF; --bg-tint: #D3CFDF; } /* About/CV — Purple */
+
+/* Homepage-only background — a soft 15% tint of purple (--hero-purple)
+   rather than a tint of --bg (which would be Wine, since body carries
+   data-category="essay"). Used by header + .category-intro's hero
+   band, and body.homepage::before's overscroll colour, since all three
+   read --bg-tint. `body.homepage` (element+class) outranks the bare
+   `[data-category="essay"]` attribute selector above regardless of
+   source order, so this safely overrides just the homepage without
+   touching the locked 20% tint used everywhere else on the site
+   (category listing headers, .subcategory, .cv-body, etc). */
+body.homepage {
+  --bg-tint: color-mix(in srgb, var(--hero-purple) 15%, white);
+}
 
 /* On category listing pages, the header/intro band stays the
    bold category colour, but the article-preview cards below use
@@ -67,6 +101,11 @@ body::before {
   height: 240px;
   background: var(--bg);
   z-index: -1;
+}
+/* matches the homepage header override above, so a rubber-band bounce
+   at the top of the page reveals the same tint, not the full colour */
+body.homepage::before {
+  background: var(--bg-tint);
 }
 
 body {
@@ -103,6 +142,19 @@ header {
   background: var(--bg);
   color: var(--fg);
 }
+/* Homepage mixes categories (Writing/Film/Exhibition cards stacked
+   directly under the header), so a full-strength header would clash
+   with whichever colour happens to be first. Use the page's pale tint
+   instead — same colour language as .subcategory/.card-tint elsewhere
+   — with dark text instead of the category's own --fg, since --fg was
+   picked for contrast against the full-strength colour, not the tint. */
+body.homepage header {
+  background: var(--bg-tint);
+  color: #1E1E1E;
+}
+/* the hero text is now just the tagline (name dropped from it — see
+   body.homepage .category-intro h1 below), so the header wordmark is
+   reinstated as the only place the name appears on the homepage. */
 header .bar {
   align-items: baseline;
   padding-block: 48px 30px;
@@ -112,6 +164,11 @@ header .bar {
    same marker—line—marker language as the card dividers */
 .menu-rule {
   padding-block: 0 32px;
+}
+/* the identity hero sits directly below the header on the homepage —
+   no need for this rule to also mark that seam */
+body.homepage .menu-rule {
+  display: none;
 }
 .menu-rule-line {
   grid-column: 1 / -1;
@@ -141,6 +198,12 @@ header .bar {
   font-weight: 500;
   text-decoration: none;
   color: inherit;
+}
+/* header's instance only — sitewide, every page — smaller than the
+   32px base above. Scoped to "header .wordmark" specifically so the
+   footer's wordmark (same class, reused there) keeps its full size. */
+header .wordmark {
+  font-size: 24px;
 }
 nav {
   grid-column: 6 / -1;
@@ -228,6 +291,254 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   background: var(--bg);
   color: var(--fg);
 }
+/* Homepage reuses this block for the site's identity statement — same
+   pale tint as the header just above it (body.homepage header), so
+   the two read as one continuous band. No portrait photo for now;
+   the intro-text width cap and centring live in the rule below,
+   alongside the hero-diagram it now shares this band with. */
+body.homepage .category-intro {
+  background: var(--bg-tint);
+  color: #1E1E1E;
+}
+/* Left-aligned, large display statement — the diagram (below) now
+   floats ON TOP of it (z-index lower than .hero-diagram, the opposite
+   of the earlier centred layout) rather than staying clear of it, so
+   overlap with the boxes/lines is expected and fine here. */
+body.homepage .category-intro .intro-text {
+  grid-column: 1 / -1;
+  position: relative;
+  z-index: 0;
+  text-align: left;
+}
+/* much larger than the shared .category-intro h1 size below (which
+   the writing/film/exhibition/education listing pages still use at
+   their own, smaller size) — a big display statement with the
+   diagram layered over it, rather than a quiet line centred among
+   the boxes. clamp's own min/max keep it sane on narrow screens
+   without a separate mobile override. */
+body.homepage .category-intro h1 {
+  font-size: clamp(48px, 9vw, 140px);
+  line-height: 1.02;
+}
+/* NOT a full-page hero — a bio section follows it below (same
+   background), so the hero only needs to be tall enough to make a
+   statement, not fill the viewport. Text vertically centred within it
+   rather than just top-padded. .hero-row is still display:grid (from
+   .grid), so align-items here is grid's own row-alignment, not flex.
+   Extra class in the selector (.category-intro .hero-row, not just
+   .hero-row) so this outranks ".category-intro .grid { padding-block:
+   8px 72px }" below regardless of source order. position:relative +
+   overflow:hidden turns it into the containing block for
+   .hero-diagram and keeps any node whose bob motion drifts near the
+   edge from poking past it. */
+body.homepage .category-intro .hero-row {
+  min-height: calc(60vh + 150px);
+  align-items: center;
+  padding-block: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================
+   HOMEPAGE HERO DIAGRAM — 9 concept-word rectangles scattered
+   across the hero, floating on top of the large left-aligned hero
+   text, joined by a web of connecting lines (hero-diagram.js draws
+   these as SVG <line>s and keeps their endpoints glued to each box's
+   live position every frame). Each box wanders continuously and
+   slowly — hero-diagram.js drives this with summed sine waves (not
+   CSS @keyframes: a multi-stop keyframe animation eases to zero
+   velocity at each stop, which reads as a stutter, whereas sine
+   curves never stop or change direction sharply) recomputed every
+   animation frame. Base positions are also randomised, freshly on
+   every page load (a reload reshuffles the whole layout) — via a
+   stratified 3x3 grid (one word per cell, shuffled + jittered) rather
+   than pure random sampling, so the 9 boxes reliably cover the whole
+   hero instead of occasionally clumping together by chance. Overlap
+   with the hero text is expected here, not avoided.
+   ============================================================ */
+.hero-diagram {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+/* lines paint first (z-index 0 within .hero-diagram's own stacking
+   context) so they sit behind the word rectangles (z-index 1, below)
+   — both are above .intro-text (z-index 0, a sibling of
+   .hero-diagram), so the whole diagram floats on top of the text */
+.hero-diagram-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: 0;
+}
+.hero-diagram-lines path {
+  fill: none;
+  stroke: #FFFFFF;
+  stroke-opacity: 0.9;
+  stroke-width: 1;
+}
+/* outer element holds the base position (left/top %, assigned by
+   hero-diagram.js — freshly randomised on every load); the inner
+   element holds the bob animation — kept on two separate elements so
+   the animated transform doesn't have to fight the translate(-50%,
+   -50%) centring transform on the same property. Starts hidden so
+   there's no flash of un-positioned boxes stacked at top-left before
+   the JS runs; it flips to visible once a position is assigned. */
+.hero-node {
+  position: absolute;
+  visibility: hidden;
+  z-index: 1;
+}
+.hero-node-inner {
+  display: inline-block;
+  transform: translate(-50%, -50%);
+  padding: 12px 20px;
+  font-size: clamp(13px, 1.15vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  will-change: transform;
+  /* stays sharp (no border-radius) — the 6px radius applied elsewhere
+     is for text-container boxes (.substack-box, .meta-box), not the
+     hero diagram's word tags. */
+}
+.hero-node[data-color="wine"]     .hero-node-inner { background: var(--hero-wine);     color: #FFFFFF; }
+.hero-node[data-color="green"]    .hero-node-inner { background: var(--hero-green);    color: #FFFFFF; }
+.hero-node[data-color="ochre"]    .hero-node-inner { background: var(--hero-ochre);    color: #1E1E1E; }
+.hero-node[data-color="orange"]   .hero-node-inner { background: var(--hero-orange);   color: #1E1E1E; }
+.hero-node[data-color="purple"]   .hero-node-inner { background: var(--hero-purple);   color: #FFFFFF; }
+.hero-node[data-color="yellow"]   .hero-node-inner { background: var(--hero-yellow);   color: #1E1E1E; }
+.hero-node[data-color="sky"]      .hero-node-inner { background: var(--hero-sky);      color: #1E1E1E; }
+.hero-node[data-color="lavender"] .hero-node-inner { background: var(--hero-lavender); color: #1E1E1E; }
+.hero-node[data-color="peach"]    .hero-node-inner { background: var(--hero-peach);    color: #1E1E1E; }
+/* dense diagram doesn't fit a stacked mobile hero — text alone carries
+   the section below 900px, same width the .category-intro h1/standfirst
+   collapse to just below */
+@media (max-width: 900px) {
+  .hero-diagram { display: none; }
+}
+
+/* TEMPORARY (2026-07-30): hide the featured-grid + article-card
+   sections, so the homepage currently reads as hero → about/bio →
+   footer. Hidden via CSS, not removed from the markup — delete this
+   block to bring the rest back. */
+body.homepage .category-intro > .grid:not(.hero-row),
+body.homepage .card.size-xs {
+  display: none;
+}
+
+/* ============================================================
+   ABOUT / BIO — sits directly below the hero, same background
+   (--bg-tint) so the two read as one continuous band. 2-column
+   circular photo placeholder (cols 1-2) + a 6-column bio prose block
+   (cols 3-8, sitting right up against the photo rather than leaving
+   the CV page's col-3 gap between them).
+   ============================================================ */
+.about-section {
+  background: var(--bg-tint);
+  color: #1E1E1E;
+}
+.about-section .grid {
+  padding-block: 96px 120px;
+  align-items: start;
+}
+.about-photo {
+  grid-column: 1 / span 2;
+  aspect-ratio: 1 / 1;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  padding: 12px;
+}
+/* .about-bio also carries the CV page's own .cv-main class, reusing
+   its grid-column:4/span5 + position:relative + .cv-divider (the
+   small-column/line/text rhythm from the CV page's sidebar/divider/
+   main split) exactly rather than re-declaring an equivalent — same
+   mobile stacking behaviour comes free from .cv-main's own responsive
+   rule too. .about-bio itself only adds this section's own prose
+   typography on top. */
+.about-bio p {
+  font-size: 18px;
+  line-height: 1.65;
+}
+.about-bio p + p {
+  margin-top: 24px;
+}
+/* inline Writing/Film/Exhibition/Education mentions — orange rather
+   than var(--bg) (which is Wine, since body carries
+   data-category="essay") so every link on the homepage reads as the
+   same colour, matching .substack-box-link's --hero-orange below. */
+.about-bio a {
+  color: var(--hero-orange);
+  font-weight: 500;
+  text-decoration: none;
+}
+.about-bio a:hover {
+  text-decoration: underline;
+}
+/* "Follow on Substack" box — same outlined-box language as article
+   pages' .meta-box (border in the page's own ink colour, background
+   matching the surrounding section rather than a contrasting fill).
+   Placed as the last child inside .about-bio (which is also .cv-main,
+   position:relative), so .cv-divider's top:0/bottom:0 — sized to its
+   containing block, same as on the CV page — naturally stretches to
+   reach this box's bottom edge instead of stopping at the prose above
+   it; no extra sizing needed for that to happen. */
+.substack-box {
+  margin-top: 32px;
+  border: 1px solid #1E1E1E;
+  background: var(--bg-tint);
+  padding: 24px 28px;
+  border-radius: 6px;
+}
+.substack-box-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.substack-box-title svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.substack-box p {
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: 0.75;
+  margin-bottom: 16px;
+}
+/* the CTA reads as a distinct, bright accent — not the muted body-copy
+   tone used for everything else in this box — same "small, bold,
+   uppercase, letter-spaced" language as the site's other small-label
+   links (.pill, .quick-nav-link). */
+.substack-box-link {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--hero-orange);
+}
+.substack-box-link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
 .category-intro .grid { padding-block: 8px 72px; }
 .category-intro h1 {
   grid-column: 1 / span 7;
@@ -246,6 +557,26 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
    line of it — same left-text/right-image balance as the
    article hero (.hero-text / .hero-image in article.css) */
 .category-intro .intro-text { grid-column: 1 / span 7; align-self: center; }
+/* full-CV download — same outlined-pill language as .quick-nav-link,
+   sized down from the standfirst's display type since it's a utility
+   action, not part of the name/tagline statement */
+.cv-download-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+}
+.cv-download-link svg { width: 16px; height: 16px; }
+.cv-download-link:hover { opacity: 0.7; }
 /* circular portrait placeholder — same "bordered box + caption"
    language as .thumb/.hero-image, fixed size so it reads as a
    portrait rather than stretching to fill the column */
@@ -268,6 +599,90 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   text-align: center;
   padding: 12px;
 }
+
+/* ============================================================
+   FEATURED GRID — homepage only: the 3 main articles sit side by
+   side in a 3-column grid instead of stacked full-width rows, right
+   below the identity header above. Each card's own full-bleed-row
+   layout (pill|text|thumb across 10 columns) doesn't fit a column
+   this narrow, so featured cards get their own stacked, flex-column
+   internal layout instead of the .size-* row treatment.
+   ============================================================ */
+.featured-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+/* cards sit side by side here, not stacked, so the sitewide same-
+   category border-top divider (meant for vertical stacking) doesn't
+   apply — cancel it rather than have a stray line across one card */
+.featured-grid > .card[data-category] + .card[data-category] {
+  border-top: none;
+}
+/* No card background at all — the 3 cards sit directly on the hero
+   section's own tint, blending into one continuous band. The tag
+   bubble carries the colour instead: solid-filled with the category's
+   own --bg/--fg (already tuned for contrast against each other), not
+   the outlined chip used everywhere else on the site.
+   Selector is .card.featured-card (not just .featured-card) so it
+   outranks the generic ".card { background: var(--bg) }" rule further
+   down the file regardless of source order — same specificity would
+   otherwise let that later rule win and silently restore the colour. */
+.card.featured-card {
+  /* base/middle-card padding: 16px each side, so its content width
+     (col − 32) matches the outer cards below, which each only pad
+     one side at 32px — same content width everywhere keeps the
+     image, title wrap and pill position identical across all 3 */
+  padding: 0 16px 32px;
+  background: transparent;
+  color: inherit;
+}
+/* first card sits flush with the page's left margin, last card flush
+   with the right margin — the single remaining side takes the full
+   32px so every card's content area is the same width */
+.featured-grid > .featured-card:first-child { padding-left: 0; padding-right: 32px; }
+.featured-grid > .featured-card:last-child { padding-left: 32px; padding-right: 0; }
+/* vertical rule marking the seam between cards — since gap:0 means
+   cards touch at the raw column edge, and the two sides of that edge
+   have unequal padding (32px outer card / 16px middle card), a border
+   glued to the edge itself would sit off-centre in the whitespace gap.
+   Position it with a pseudo-element instead, offset by the difference
+   between the two paddings (32-16=16, so 8px each way) so it lands in
+   the true middle of the gap on both sides. */
+.featured-card { position: relative; }
+.featured-grid > .featured-card:nth-child(2)::before,
+.featured-grid > .featured-card:nth-child(3)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(30, 30, 30, 0.15);
+}
+.featured-grid > .featured-card:nth-child(2)::before { left: -8px; }
+.featured-grid > .featured-card:nth-child(3)::before { left: 8px; }
+.featured-card .card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.featured-card .thumb {
+  aspect-ratio: 16 / 9;
+  align-self: stretch;
+  margin-bottom: 24px;
+}
+.featured-card .pill {
+  align-self: flex-start;
+  margin-bottom: 24px;
+  background: var(--bg);
+  color: var(--fg);
+  border: none;
+}
+.featured-card h2 { font-size: 24px; margin-bottom: 16px; }
+.featured-card .sub { font-size: 16px; }
+.featured-card .rule { margin-block: 24px; }
+.featured-card .meta { margin-top: auto; }
 
 /* ============================================================
    SUBCATEGORY GROUPS — used on the Writing listing page to
@@ -375,11 +790,17 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .cv-job-years { font-size: 12px; opacity: 0.55; margin-bottom: 8px; }
 .cv-job h3 { font-size: 22px; font-weight: 500; margin-bottom: 16px; }
 .cv-job p { font-size: 14px; line-height: 1.6; }
-.cv-job a { color: #EB094B; font-weight: 500; text-decoration: none; }
+.cv-job a { color: var(--bg); font-weight: 500; text-decoration: none; }
 .cv-job a:hover { text-decoration: underline; }
 
 /* publications — same column, but as a compact reading-list rather
    than the large cv-job role headers above */
+.cv-pub-note {
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.65;
+  margin: -8px 0 24px;
+}
 .cv-main h2 + .cv-pub-heading { margin-top: 0; }
 .cv-pub-heading {
   font-size: 14px;
@@ -398,7 +819,7 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   line-height: 1.5;
   margin-bottom: 16px;
 }
-.cv-pub-list a { color: #EB094B; font-weight: 500; text-decoration: none; }
+.cv-pub-list a { color: var(--bg); font-weight: 500; text-decoration: none; }
 .cv-pub-list a:hover { text-decoration: underline; }
 
 /* ============================================================
@@ -413,13 +834,10 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
    the exact same category colour — otherwise the colour change
    itself is enough of a divider. Uses each card's own --fg at low
    opacity so it reads correctly on both light and dark colours. */
-.card[data-category="essay"]        + .card[data-category="essay"],
-.card[data-category="workshop"]     + .card[data-category="workshop"],
-.card[data-category="exhibition-a"] + .card[data-category="exhibition-a"],
-.card[data-category="exhibition-b"] + .card[data-category="exhibition-b"],
-.card[data-category="exhibition-c"] + .card[data-category="exhibition-c"],
-.card[data-category="exhibition-d"] + .card[data-category="exhibition-d"],
-.card[data-category="film"]         + .card[data-category="film"] {
+.card[data-category="essay"]      + .card[data-category="essay"],
+.card[data-category="workshop"]   + .card[data-category="workshop"],
+.card[data-category="exhibition"] + .card[data-category="exhibition"],
+.card[data-category="film"]       + .card[data-category="film"] {
   border-top: 1px solid color-mix(in srgb, var(--fg) 25%, transparent);
 }
 
@@ -441,20 +859,6 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-/* lighter backgrounds get a heavier 2px pill border, per Figma */
-.card[data-category="exhibition-b"] .pill,
-.card[data-category="exhibition-c"] .pill,
-.card[data-category="exhibition-d"] .pill {
-  border-width: 2px;
-}
-/* on category-listing pages every card uses the light --bg-tint
-   colour (not just b/c/d), so all pills need the same heavier
-   stroke — otherwise exhibition-a's pill looks thinner than its
-   neighbours purely because it wasn't light on the homepage. */
-body.category-page .card .pill {
-  border-width: 1px;
-}
-
 /* --- text block --- */
 .card h2 {
   font-weight: 500;
@@ -527,7 +931,7 @@ body.category-page .card .pill {
    SIZE L — essay / workshop rows (40px title). 10-col grid,
    pill:text:thumb = 2:4:4
    ============================================================ */
-.size-l { padding-block: 64px; }
+.size-l { padding-block: 40px; }
 .size-l .text  { grid-column: 3 / span 4; }
 .size-l .thumb { grid-column: 7 / -1; }
 .size-l h2 { font-size: 40px; }
@@ -536,7 +940,7 @@ body.category-page .card .pill {
    SIZE M — rows with image (30px title). 10-col grid,
    pill:text = 2:5, thumb pinned to the right margin
    ============================================================ */
-.size-m { padding-block: 64px; }
+.size-m { padding-block: 40px; }
 .size-m .text  { grid-column: 3 / span 5; }
 .size-m .thumb {
   grid-column: 8 / -1;
@@ -549,9 +953,18 @@ body.category-page .card .pill {
 /* ============================================================
    SIZE S — compact rows: title + meta only, no image
    ============================================================ */
-.size-s { padding-block: 64px; }
+.size-s { padding-block: 40px; }
 .size-s .text { grid-column: 3 / -1; }
 .size-s h2 { font-size: 36px; margin-bottom: 32px; }
+
+/* ============================================================
+   SIZE XS — even more compact: same layout as S, but the title
+   drops to the same size as M's (30px) and skips the decorative
+   rule entirely — title sits directly above the meta line.
+   ============================================================ */
+.size-xs { padding-block: 40px; }
+.size-xs .text { grid-column: 3 / -1; }
+.size-xs h2 { font-size: 30px; margin-bottom: 8px; }
 
 /* subtle hover, keyboard focus */
 .card-link:focus-visible { outline: 2px solid currentColor; outline-offset: -8px; }
@@ -614,10 +1027,49 @@ footer .copyright {
 }
 
 /* ============================================================
+   BACK TO TOP — floating bubble, fades in once you've scrolled
+   past the hero. Always off-black/white regardless of the page's
+   category colour (same treatment as the footer) so it reads
+   consistently everywhere. Same block duplicated in article.css —
+   the two stylesheets are never loaded on the same page.
+   ============================================================ */
+.back-to-top {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: #17181A;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  z-index: 100;
+}
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.back-to-top:hover { opacity: 0.85; }
+.back-to-top svg { width: 20px; height: 20px; }
+
+/* ============================================================
    RESPONSIVE — stack below tablet
    ============================================================ */
 @media (max-width: 900px) {
   :root { --margin: 20px; --gutter: 20px; }
+  body.homepage .category-intro .hero-row { min-height: auto; padding-block: 48px; }
+  .back-to-top { right: 20px; bottom: 20px; width: 42px; height: 42px; }
   nav { gap: 24px; }
   .wordmark { grid-column: 1 / -1; margin-bottom: 20px; }
   nav { grid-column: 1 / -1; justify-content: flex-start; flex-wrap: wrap; }
@@ -627,12 +1079,16 @@ footer .copyright {
     grid-column: 1 / -1;
   }
   .cv-photo { grid-column: 1 / -1; justify-self: start; margin-top: 24px; }
+  .featured-grid { grid-template-columns: 1fr; }
   .pill  { grid-column: 1 / -1; margin-bottom: 28px; }
-  .size-l .text, .size-m .text, .size-s .text { grid-column: 1 / -1; }
+  .size-l .text, .size-m .text, .size-s .text, .size-xs .text { grid-column: 1 / -1; }
   .size-l .thumb, .size-m .thumb { grid-column: 1 / span 5; justify-self: start; width: auto; margin-top: 32px; }
   .cv-sidebar, .cv-main { grid-column: 1 / -1; }
   .cv-main { margin-top: 56px; }
   .cv-divider { display: none; }
+  .about-photo { grid-column: 1 / span 3; width: 140px; }
+  /* .about-bio's mobile stacking comes from .cv-main's own rule above
+     (grid-column:1/-1, margin-top:56px) since it carries that class */
   footer .footer-nav,
   footer .social {
     grid-column: 1 / -1;

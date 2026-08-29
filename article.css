@@ -1,7 +1,7 @@
 /* ============================================================
    ARTICLE TEMPLATE STYLESHEET
    ------------------------------------------------------------
-   Shared by every article page (essay, workshop, exhibition-a/b/c/d).
+   Shared by every article page (essay, workshop, exhibition, film, about).
    Each page only differs by:
      - the `data-category` value on <body>
      - its own hero/body/related content
@@ -35,59 +35,51 @@
   --meta-fg: #1E1E1E;
   --meta-border: #E5E5E5;
 
-  /* Chart palette — the site's six category accent colours (the same
-     hex values used as --hero-bg per [data-category] below), aliased
-     here so multi-series charts can draw on the full site palette
-     regardless of which category the current page belongs to. */
-  --chart-1: #EB094B; /* essay accent */
-  --chart-2: #FF6D63; /* workshop accent */
-  --chart-3: #1B3720; /* exhibition-a accent */
-  --chart-4: #BCBCF8; /* exhibition-b accent */
-  --chart-5: #FFE07D; /* exhibition-c accent */
-  --chart-6: #FF8D3C; /* exhibition-d accent */
+  /* Chart palette — the site's 5 locked category accents plus the
+     footer off-black as a 6th when a chart needs more series than
+     categories. Aliased here so multi-series charts can draw on the
+     full site palette regardless of which category the page belongs to. */
+  --chart-1: #870A2F; /* essay — Writing / Wine */
+  --chart-2: #1B3720; /* workshop — Education / Green */
+  --chart-3: #FF8D3C; /* exhibition — Exhibition / Ochre */
+  --chart-4: #FF564B; /* film — Film / Orange */
+  --chart-5: #24105D; /* about — About/CV / Purple */
+  --chart-6: #17181A; /* footer off-black — 6th colour when needed */
 }
 
-/* essay — primary #EB094B, secondary = 20% tint #FBCEDB, related = 7% tint #FEEEF2 */
+/* Locked site tokens (2026-07-26) — Writing=Wine, Education=Green,
+   Exhibition=Ochre, Film=Orange, About/CV=Purple. --body-bg is the
+   standard 20% tint, --related-bg the standard 7% tint, per the
+   formula documented above. */
+/* essay — primary #870A2F, secondary = 20% tint #E7CED5, related = 7% tint #F7EEF0 */
 [data-category="essay"] {
-  --hero-bg: #EB094B; --hero-fg: #FFFFFF;
-  --body-bg: #FBCEDB; --body-fg: #1E1E1E;
-  --related-bg: #FEEEF2;
+  --hero-bg: #870A2F; --hero-fg: #FFFFFF;
+  --body-bg: #E7CED5; --body-fg: #1E1E1E;
+  --related-bg: #F7EEF0;
 }
-/* workshop — primary #FF6D63, secondary = 20% tint #FFE2E0, related = 7% tint #FFF5F4 */
+/* workshop — primary #1B3720, secondary = 20% tint #D1D7D2, related = 7% tint #EFF1EF */
 [data-category="workshop"] {
-  --hero-bg: #FF6D63; --hero-fg: #1E1E1E;
-  --body-bg: #FFE2E0; --body-fg: #1E1E1E;
-  --related-bg: #FFF5F4;
-}
-/* exhibition-a (green) — primary #1B3720, secondary = 20% tint #D1D7D2, related = 7% tint #EFF1EF */
-[data-category="exhibition-a"] {
   --hero-bg: #1B3720; --hero-fg: #FFFFFF;
   --body-bg: #D1D7D2; --body-fg: #1E1E1E;
   --related-bg: #EFF1EF;
 }
-/* exhibition-b (lavender) — primary #BCBCF8, secondary = 20% tint #F2F2FE, related = 7% tint #FAFAFF */
-[data-category="exhibition-b"] {
-  --hero-bg: #BCBCF8; --hero-fg: #1E1E1E;
-  --body-bg: #F2F2FE; --body-fg: #1E1E1E;
-  --related-bg: #FAFAFF;
-}
-/* exhibition-c (yellow) — primary #FFE07D, secondary = 20% tint #FFF9E5, related = 7% tint #FFFDF6 */
-[data-category="exhibition-c"] {
-  --hero-bg: #FFE07D; --hero-fg: #1E1E1E;
-  --body-bg: #FFF9E5; --body-fg: #1E1E1E;
-  --related-bg: #FFFDF6;
-}
-/* exhibition-d (orange) — primary #FF8D3C, secondary = 20% tint #FFE8D8, related = 7% tint #FFF7F1 */
-[data-category="exhibition-d"] {
+/* exhibition (ochre) — primary #FF8D3C, secondary = 20% tint #FFE8D8, related = 7% tint #FFF7F1 */
+[data-category="exhibition"] {
   --hero-bg: #FF8D3C; --hero-fg: #1E1E1E;
   --body-bg: #FFE8D8; --body-fg: #1E1E1E;
   --related-bg: #FFF7F1;
 }
-/* film — primary #1E2A5C, secondary = 20% tint #D2D4DE, related = 7% tint #EFF0F4 */
+/* film (orange) — primary #FF564B, secondary = 20% tint #FFDDDB, related = 7% tint #FFF3F2 */
 [data-category="film"] {
-  --hero-bg: #1E2A5C; --hero-fg: #FFFFFF;
-  --body-bg: #D2D4DE; --body-fg: #1E1E1E;
-  --related-bg: #EFF0F4;
+  --hero-bg: #FF564B; --hero-fg: #1E1E1E;
+  --body-bg: #FFDDDB; --body-fg: #1E1E1E;
+  --related-bg: #FFF3F2;
+}
+/* about (purple) — primary #24105D, secondary = 20% tint #D3CFDF, related = 7% tint #F0EEF4 */
+[data-category="about"] {
+  --hero-bg: #24105D; --hero-fg: #FFFFFF;
+  --body-bg: #D3CFDF; --body-fg: #1E1E1E;
+  --related-bg: #F0EEF4;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -191,12 +183,6 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-[data-category="exhibition-b"] .pill,
-[data-category="exhibition-c"] .pill,
-[data-category="exhibition-d"] .pill {
-  border-width: 2px;
-}
-
 .rule {
   display: flex;
   align-items: center;
@@ -234,6 +220,18 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .hero {
   background: var(--hero-bg);
   color: var(--hero-fg);
+  position: relative;
+  overflow: hidden;
+  /* ~25% taller than the band's old implicit height (text content
+     alone) — gives the full-bleed image real presence, and gives the
+     text room to be genuinely vertically centred rather than just
+     filling exactly to its own height. .hero is the flex container
+     (not .grid) so the text column centres as a whole block; the
+     absolutely-positioned .hero-image is unaffected and still spans
+     edge to edge/top to bottom regardless. */
+  min-height: 560px;
+  display: flex;
+  align-items: center;
 }
 .hero .grid {
   padding-block: 64px 56px;
@@ -243,6 +241,7 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   grid-column: 1 / span 5;
   align-self: center;
   text-align: left;
+  position: relative;
 }
 .hero-text .pill { margin-bottom: 32px; }
 .hero-text h1 {
@@ -252,28 +251,82 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   margin-bottom: 32px;
 }
 .hero-text .rule { margin-bottom: 24px; }
+/* Full-bleed right half of the hero band itself — not an inset frame
+   confined to the content grid. Positioned absolutely against .hero
+   (not a grid item any more) so it runs edge-to-edge and matches the
+   hero's full height, whatever that height ends up being. */
 .hero-image {
-  grid-column: 6 / -1;
-  align-self: center;
-  display: flex;
-  flex-direction: column;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50%;
 }
-.hero-image-frame {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-}
-.hero-image-frame img {
+.hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-.hero-image-caption {
-  margin-top: 14px;
-  font-size: 13px;
+/* placeholder pages (no real photo yet) keep the same full-bleed box,
+   just with the centred placeholder label instead of an image */
+.hero-image[role="img"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.5;
+  text-align: center;
+  padding: 24px;
+}
+/* small "i" bubble in the corner of a real photo, opens a popover
+   with the photo credit instead of a permanent caption line under
+   the image — toggled via article.js */
+.photo-credit {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}
+.photo-credit-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.45);
+  color: #FFFFFF;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+.photo-credit-btn:hover { background: rgba(0, 0, 0, 0.65); }
+.photo-credit-popover {
+  position: absolute;
+  right: 0;
+  bottom: 36px;
+  width: 240px;
+  background: #17181A;
+  color: #FFFFFF;
+  font-size: 12px;
   line-height: 1.5;
-  opacity: 0.75;
+  padding: 12px 14px;
+  border-radius: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+.photo-credit-popover.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 /* ============================================================
@@ -293,6 +346,7 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   background: var(--body-bg);
   color: var(--body-fg);
   border: 1px solid var(--body-fg);
+  border-radius: 6px;
   padding: 24px 36px;
   display: flex;
   flex-wrap: wrap;
@@ -560,6 +614,17 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   overflow: hidden;
   margin-bottom: 28px;
 }
+/* the drop-cap below is meant for the essay's opening line — when a
+   paragraph is the first body-copy element only because it follows a
+   video (not because it's the article's true opening line), the giant
+   floated first letter reads as broken spacing. Reset it here. */
+.body-copy .video-embed + p::first-letter {
+  float: none;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+}
 .body-copy .video-embed iframe {
   position: absolute;
   top: 0;
@@ -760,17 +825,18 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   gap: 12px;
   margin-top: 56px;
 }
-.body-copy .tags a {
+/* tags are topic labels, not links — nothing on the site to link them
+   to yet, so they're plain (non-interactive) spans */
+.body-copy .tags .tag {
+  display: inline-block;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 2px;
   text-transform: uppercase;
-  text-decoration: none;
   border: 1px solid currentColor;
   border-radius: 999px;
   padding: 8px 18px;
 }
-.body-copy .tags a:hover { opacity: 0.7; }
 
 /* ============================================================
    RELATED — horizontally-scrolling carousel of other articles,
@@ -866,11 +932,12 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   margin-bottom: 8px;
 }
 .related-item:hover .related-title { text-decoration: underline; text-underline-offset: 4px; }
-.related-source {
-  font-size: 13px;
-  opacity: 0.55;
+.related-sub {
+  font-size: 16px;
+  line-height: 1.45;
+  opacity: 0.75;
+  margin-bottom: 10px;
 }
-
 /* ============================================================
    FOOTER — off-black, wordmark + vertical nav + social icons,
    copyright line below a hairline rule
@@ -928,10 +995,48 @@ footer .copyright {
 }
 
 /* ============================================================
+   BACK TO TOP — floating bubble, fades in once you've scrolled
+   past the hero. Always off-black/white regardless of the page's
+   category colour (same treatment as the footer) so it reads
+   consistently everywhere. Same block duplicated in home.css —
+   the two stylesheets are never loaded on the same page.
+   ============================================================ */
+.back-to-top {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: #17181A;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  z-index: 100;
+}
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.back-to-top:hover { opacity: 0.85; }
+.back-to-top svg { width: 20px; height: 20px; }
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
   :root { --margin: 20px; --gutter: 20px; }
+  .back-to-top { right: 20px; bottom: 20px; width: 42px; height: 42px; }
   .wordmark { grid-column: 1 / -1; margin-bottom: 20px; }
   nav { grid-column: 1 / -1; justify-content: flex-start; flex-wrap: wrap; gap: 24px; }
   .hero-text,
@@ -939,7 +1044,20 @@ footer .copyright {
   .body-copy {
     grid-column: 1 / -1;
   }
-  .hero-image { margin-top: 32px; min-height: 280px; }
+  /* the absolute/full-bleed-right-half treatment only makes sense
+     next to a side-by-side text column — stack it back into normal
+     flow, full width, below the text, on narrow screens. min-height/
+     flex-centring on .hero is also a desktop-only side-by-side thing —
+     reset it so a short title doesn't leave a big empty gap above the
+     stacked image. */
+  .hero { min-height: auto; display: block; }
+  .hero-image {
+    position: static;
+    width: 100%;
+    height: 350px;
+    margin-top: 32px;
+  }
+  .photo-credit { right: 12px; bottom: 12px; }
   .meta-box { flex-direction: column; align-items: flex-start; }
   .related-item { flex-basis: calc((100% - var(--gutter)) / 1.3); }
   .related-arrow { display: none; }

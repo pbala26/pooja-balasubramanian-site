@@ -1,7 +1,9 @@
-// Related-articles carousel: prev/next buttons scroll the track by
-// one card width at a time. Native drag/touch/trackpad scrolling
-// on .related-viewport works without any JS at all — this just
-// wires up the arrow buttons.
+// Related-articles carousel: loops infinitely in both directions, via
+// any scroll method (arrow buttons, trackpad, touch), not just the
+// buttons. Technique: duplicate the item set twice more (3 copies back
+// to back), start scrolled into the middle copy, then silently snap
+// scrollLeft back into that middle copy whenever a scroll strays into
+// copy 1 or copy 3 — the illusion of infinite content in both directions.
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.related').forEach((section) => {
     const viewport = section.querySelector('.related-viewport');
@@ -16,6 +18,44 @@ document.addEventListener('DOMContentLoaded', () => {
       const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || '0');
       return card.getBoundingClientRect().width + gap;
     };
+
+    const originalItems = Array.from(track.children);
+    const canLoop = originalItems.length > 1;
+    if (canLoop) {
+      for (let copy = 0; copy < 2; copy++) {
+        originalItems.forEach((item) => track.appendChild(item.cloneNode(true)));
+      }
+    }
+
+    // One "set" = the width of the original, un-cloned item list.
+    const setWidth = () => track.scrollWidth / 3;
+
+    // Move scrollLeft without the smooth-scroll animation being visible
+    // (a plain assignment would otherwise animate across the whole jump).
+    const jumpTo = (left) => {
+      viewport.style.scrollBehavior = 'auto';
+      viewport.scrollLeft = left;
+      viewport.style.scrollBehavior = '';
+    };
+
+    if (canLoop) {
+      jumpTo(setWidth());
+
+      let ticking = false;
+      viewport.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const len = setWidth();
+          if (viewport.scrollLeft < len * 0.5) {
+            jumpTo(viewport.scrollLeft + len);
+          } else if (viewport.scrollLeft > len * 1.5) {
+            jumpTo(viewport.scrollLeft - len);
+          }
+          ticking = false;
+        });
+      });
+    }
 
     if (prev) {
       prev.addEventListener('click', () => {
@@ -45,6 +85,32 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     charts.forEach((chart) => chart.classList.add('in-view'));
   }
+
+  // Photo credit bubble: click the "i" button on a hero image to open
+  // a small popover with the photo credit, instead of a permanent
+  // caption line under the image. Closes on outside click or Escape.
+  document.querySelectorAll('.photo-credit').forEach((wrap) => {
+    const btn = wrap.querySelector('.photo-credit-btn');
+    const popover = wrap.querySelector('.photo-credit-popover');
+    if (!btn || !popover) return;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = popover.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    document.addEventListener('click', (e) => {
+      if (!wrap.contains(e.target)) {
+        popover.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        popover.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
 
   // Photo gallery lightbox: click any .gallery-grid image to expand it
   // full-screen; click the overlay, the close button, or press Escape

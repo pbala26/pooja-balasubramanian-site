@@ -7,14 +7,14 @@
 <!-- @include font-links.html -->
 <link rel="stylesheet" href="article.css">
 </head>
-<body data-category="exhibition-a">
+<body data-category="exhibition">
 
 <!-- @include header.html -->
 
 <!--
   Swap data-category on <body> above to re-theme the whole page
   (header + hero + body all follow it):
-  essay | workshop | exhibition-a | exhibition-b | exhibition-c | exhibition-d
+  essay | workshop | exhibition | film | about
 -->
 <main>
 
@@ -35,12 +35,10 @@
       <div class="meta-box">
         <div class="authors">
           <span class="label">Words by</span>
-          <a href="#">Pooja Balasubramanian</a>
-          <span>&nbsp;with&nbsp;</span>
-          <a href="#">Co-author Name</a>
+          Pooja Balasubramanian with Co-author Name
         </div>
         <div class="links">
-          <a href="#" target="_blank" rel="noopener">Read on The Wire &#8599;</a>
+          <span class="abstract-forthcoming">No link yet</span>
         </div>
       </div>
       <div class="body-copy">
@@ -51,9 +49,9 @@
         <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
         <p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
         <div class="tags">
-          <a href="#">Immigration</a>
-          <a href="#">Policy</a>
-          <a href="#">Far right</a>
+          <span class="tag">Immigration</span>
+          <span class="tag">Policy</span>
+          <span class="tag">Far right</span>
         </div>
       </div>
     </div>
@@ -62,36 +60,7 @@
   <section class="related">
     <div class="related-viewport">
       <div class="related-track">
-        <a class="related-item" href="essay.html">
-          <div class="related-thumb" role="img" aria-label="Preview image">Preview image placeholder</div>
-          <span class="related-cat">Essay</span>
-          <h4 class="related-title">As the ideal German immigrant, I saw how the supremacist integration system enables the far right &#8594;</h4>
-          <p class="related-source">2024, originally published in The Wire</p>
-        </a>
-        <a class="related-item" href="workshop.html">
-          <div class="related-thumb" role="img" aria-label="Preview image">Preview image placeholder</div>
-          <span class="related-cat">Workshop</span>
-          <h4 class="related-title">From Peripheral Populations to Financial Fiefdoms: A Case Study from Southern India. &#8594;</h4>
-          <p class="related-source">2024, originally published in The Wire</p>
-        </a>
-        <a class="related-item" href="exhibition-b.html">
-          <div class="related-thumb" role="img" aria-label="Preview image">Preview image placeholder</div>
-          <span class="related-cat">Exhibition</span>
-          <h4 class="related-title">As the ideal German immigrant, I saw how the supremacist integration system enables the far right &#8594;</h4>
-          <p class="related-source">2024, originally published in The Wire</p>
-        </a>
-        <a class="related-item" href="exhibition-c.html">
-          <div class="related-thumb" role="img" aria-label="Preview image">Preview image placeholder</div>
-          <span class="related-cat">Exhibition</span>
-          <h4 class="related-title">As the ideal German immigrant, I saw how the supremacist integration system enables the far right &#8594;</h4>
-          <p class="related-source">2024, originally published in The Wire</p>
-        </a>
-        <a class="related-item" href="exhibition-d.html">
-          <div class="related-thumb" role="img" aria-label="Preview image">Preview image placeholder</div>
-          <span class="related-cat">Exhibition</span>
-          <h4 class="related-title">As the ideal German immigrant, I saw how the supremacist integration system enables the far right &#8594;</h4>
-          <p class="related-source">2024, originally published in The Wire</p>
-        </a>
+        <!-- @related -->
       </div>
     </div>
     <button class="related-arrow prev" type="button" aria-label="Previous">
@@ -107,5 +76,7 @@
 <!-- @include footer.html -->
 
 <script src="article.js"></script>
+
+<!-- @include back-to-top.html -->
 </body>
 </html>

@@ -7,53 +7,158 @@
 <!-- @include font-links.html -->
 <link rel="stylesheet" href="home.css">
 </head>
-<body data-category="essay">
+<body data-category="essay" class="homepage">
 
 <!-- @include header.html -->
 
-<!-- SIZE M · op-ed -->
-<article class="card size-m" data-category="essay">
+<section class="category-intro">
+  <div class="grid hero-row">
+    <div class="hero-diagram" aria-hidden="true">
+      <svg class="hero-diagram-lines"></svg>
+      <div class="hero-node" data-color="wine"><span class="hero-node-inner">economics</span></div>
+      <div class="hero-node" data-color="orange"><span class="hero-node-inner">debt</span></div>
+      <div class="hero-node" data-color="purple"><span class="hero-node-inner">abolition</span></div>
+      <div class="hero-node" data-color="ochre"><span class="hero-node-inner">anti-caste</span></div>
+      <div class="hero-node" data-color="green"><span class="hero-node-inner">ecologies</span></div>
+      <div class="hero-node" data-color="yellow"><span class="hero-node-inner">self determination</span></div>
+      <div class="hero-node" data-color="sky"><span class="hero-node-inner">sovereignty</span></div>
+      <div class="hero-node" data-color="lavender"><span class="hero-node-inner">care</span></div>
+      <div class="hero-node" data-color="peach"><span class="hero-node-inner">work</span></div>
+    </div>
+    <div class="intro-text">
+      <h1>Feminist heterodox researcher, writer and artist</h1>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="featured-grid">
+
+      <!-- FEATURED · film -->
+      <article class="card featured-card" data-category="film">
+        <a class="card-link featured-card-link" href="film-arboreal-archives.html">
+          <div class="thumb" role="img" aria-label="Preview image"></div>
+          <span class="pill">Film</span>
+          <h2>Arboreal Archives</h2>
+          <p class="sub">A 120 year old Oak tree deliberates on questions about solidarity, activism and how to build movements as it witnesses an ongoing one-month protest camp at Oranienplatz in Berlin.</p>
+          <div class="rule"><span class="end"></span><span class="end"></span></div>
+          <p class="meta">2026, experimental documentary film (28 mins)</p>
+        </a>
+      </article>
+
+      <!-- FEATURED · essay -->
+      <article class="card featured-card" data-category="essay">
+        <a class="card-link featured-card-link" href="essay-bretton-woods.html">
+          <div class="thumb" role="img" aria-label="Preview image"></div>
+          <span class="pill">Essay</span>
+          <h2>80 Years of Bleeding Us Dry! The Bretton Woods Institutions, Austerity, and Social Protection</h2>
+          <p class="sub">On how the World Bank and IMF&rsquo;s austerity conditionality has blocked rights-based social protection systems in the Global South &mdash; and what it would take to build one.</p>
+          <div class="rule"><span class="end"></span><span class="end"></span></div>
+          <p class="meta">2024, Chapter 8, Towards a People&rsquo;s History of the IMF &amp; World Bank &mdash; IBON International</p>
+        </a>
+      </article>
+
+      <!-- FEATURED · academic article -->
+      <article class="card featured-card" data-category="essay">
+        <a class="card-link featured-card-link" href="academic-financial-fiefdoms.html">
+          <div class="thumb" role="img" aria-label="Preview image"></div>
+          <span class="pill">Academic Article</span>
+          <h2>From Peripheral Populations to Financial Fiefdoms: A Case Study from Southern India</h2>
+          <p class="sub">India is undergoing a crisis of over-indebtedness. Peripheral populations increasingly rely on loans to meet their basic survival needs.</p>
+          <div class="rule"><span class="end"></span><span class="end"></span></div>
+          <p class="meta">Forthcoming, Economic and Political Weekly</p>
+        </a>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / BIO — same background as the hero above it. Photo is a
+     2-column circle placeholder (no portrait yet); bio copy is
+     original summary prose drawn from the real facts already on
+     about-cv.html (PhD/career/publications), not invented biography —
+     replace once a proper photo + finalised bio text are ready. -->
+<section class="about-section">
+  <div class="grid">
+    <div class="about-photo" role="img" aria-label="Portrait placeholder">Photo<br>coming soon</div>
+    <div class="about-bio cv-main">
+      <div class="cv-divider" aria-hidden="true">
+        <span class="end"></span>
+        <span class="end"></span>
+      </div>
+      <p>Pooja Balasubramanian is an independent researcher, writer and filmmaker working at the intersection of feminist political economy, debt and financialisation, and social policy. She holds a PhD in Development Economics from the University of G&ouml;ttingen and spent five years as a Senior Researcher at the German Institute of Development and Sustainability (IDOS). Her work takes several forms: academic and public <a href="writing.html">Writing</a>, documentary <a href="film.html">Film</a>, and university <a href="teaching.html">Education</a> on the financialisation of development &mdash; each returning to a small set of interlinked questions: who debt is owed to, who is made to carry it, and what forms of collective self-determination might exist outside its terms.</p>
+      <p>Alongside that, Pooja is a freelance theatre artist collaborating with feminist theatre collectives across Germany and India, and has co-curated <a href="exhibitions.html">Exhibition</a> work bringing artists from marginalised communities into conversation with the same themes. That dual practice &mdash; rigorous research on one hand, creative and community-facing work on the other &mdash; shapes how she approaches every project: as an attempt to make heterodox economic ideas legible and useful to the people they concern, not just to other economists.</p>
+
+      <!-- same outlined "info box" treatment as article pages' .meta-box -->
+      <div class="substack-box">
+        <div class="substack-box-title">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="4" y="4" width="16" height="3"/><rect x="4" y="9" width="16" height="3"/><rect x="4" y="14" width="10" height="7"/></svg>
+          <span>Follow Pooja on Substack</span>
+        </div>
+        <p>New essays, research notes and the occasional link roundup &mdash; sent straight to your inbox, never more than a few times a month.</p>
+        <a class="substack-box-link" href="https://substack.com/@balapooja" target="_blank" rel="noopener">Subscribe on Substack &#8594;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIZE XS · op-ed -->
+<article class="card size-xs" data-category="essay">
   <a class="card-link grid" href="op-ed-german-integration.html">
     <span class="pill">Op-Ed</span>
     <div class="text">
       <h2>As the ideal German immigrant, I saw how the supremacist integration system enables the far right</h2>
-      <p class="sub">The country is dependent on the labour force of young migrants but makes no effort to address racism and create an inclusive society for them.</p>
-      <div class="rule"><span class="end"></span><span class="end"></span></div>
       <p class="meta">2025, originally published in Scroll.in</p>
     </div>
-    <div class="thumb has-image" style="background-image:url('https://sc0.blr1.cdn.digitaloceanspaces.com/article/205890-klsojzmsdz-1739957769.jpg')" role="img" aria-label="An anti-immigration protest in Cologne, Germany, in 2016. Photo: Wolfgang Rattay/Reuters"></div>
   </a>
 </article>
 
-<!-- SIZE M · op-ed -->
-<article class="card size-m" data-category="essay">
-  <a class="card-link grid" href="op-ed-speculative-money.html">
-    <span class="pill">Op-Ed</span>
-    <div class="text">
-      <h2>Speculative Money Has Been Turning Millions of People into Commodities</h2>
-      <p class="sub">On microfinance, securitisation and household debt in Modi-era India</p>
-      <div class="rule"><span class="end"></span><span class="end"></span></div>
-      <p class="meta">2024, originally published in The Wire</p>
-    </div>
-    <div class="thumb has-image" style="background-image:url('https://m.thewire.in/sortd-service/imaginary/v22-01/jpg/large/high?url=dGhld2lyZS1pbi1wcm9kLXNvcnRkL21lZGlhZjRhZWE4NTAtNGM3Zi0xMWYwLWJmMjMtZjFjNDdiZWUxMTRjLnBuZw==')" role="img" aria-label="Preview image"></div>
-  </a>
-</article>
-
-<!-- SIZE M · op-ed -->
-<article class="card size-m" data-category="essay">
+<!-- SIZE XS · op-ed -->
+<article class="card size-xs" data-category="essay">
   <a class="card-link grid" href="op-ed-debt-everyday-life.html">
     <span class="pill">Op-Ed</span>
     <div class="text">
       <h2>Debt in everyday life: A critique on the increasing role of finance in social policy</h2>
-      <p class="sub">One gap that is rarely discussed in research is the increasing penetration of finance within social policy that is further pushing individuals and households into a debt-poverty trap.</p>
-      <div class="rule"><span class="end"></span><span class="end"></span></div>
       <p class="meta">2021, originally published by German Development Institute (DIE)</p>
     </div>
-    <div class="thumb has-image" style="background-image:url('https://www.idos-research.de/fileadmin/_processed_/c/b/csm_German_Development_Institute_Balasubramanian_2021-12-15_6b292b0d07.png')" role="img" aria-label="Preview image"></div>
+  </a>
+</article>
+
+<!-- SIZE XS · film -->
+<article class="card size-xs" data-category="film">
+  <a class="card-link grid" href="film-caregivers.html">
+    <span class="pill">Film</span>
+    <div class="text">
+      <h2>Who cares for caregivers</h2>
+      <p class="meta">2023, documentary film (4 mins)</p>
+    </div>
+  </a>
+</article>
+
+<!-- SIZE XS · exhibition -->
+<article class="card size-xs" data-category="exhibition">
+  <a class="card-link grid" href="exhibition-debt-tales.html">
+    <span class="pill">Exhibition</span>
+    <div class="text">
+      <h2>Debt Tales</h2>
+      <p class="meta">2024, with Anthoni Guruz &mdash; workshop and exhibition</p>
+    </div>
+  </a>
+</article>
+
+<!-- SIZE XS · education -->
+<article class="card size-xs" data-category="workshop">
+  <a class="card-link grid" href="teaching-financialisation-development.html">
+    <span class="pill">Education</span>
+    <div class="text">
+      <h2>Financialisation of Development</h2>
+      <p class="meta">2022&ndash;23, University of Duisburg-Essen</p>
+    </div>
   </a>
 </article>
 
 <!-- @include footer.html -->
 
+<script src="hero-diagram.js" defer></script>
+<!-- @include back-to-top.html -->
 </body>
 </html>
