@@ -246,6 +246,33 @@ nav a {
 }
 nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
+/* Social bubbles in the header nav, after the CV link — same circular
+   .icon component the footer uses, sized down to sit with the 15px nav
+   labels. Wrapped in .nav-social so the pair stays together as one
+   flex item and keeps its own tighter gap. */
+nav {
+  align-items: center;
+}
+.nav-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+nav .icon {
+  width: 30px;
+  height: 30px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+nav .icon:hover { opacity: 0.7; }
+nav .icon svg { width: 14px; height: 14px; }
+
 /* Hamburger button — desktop shows the nav inline and never needs this;
    it only appears below the 900px breakpoint (see the media query at the
    end of this file), where the nav collapses behind it rather than
@@ -284,11 +311,11 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .quick-nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   border: 1px solid var(--bg);
   border-radius: 999px;
-  padding: 9px 18px;
-  font-size: 13px;
+  padding: 7px 15px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -624,6 +651,8 @@ body.homepage .about-bio .cv-divider {
    from the base coral link rule. */
 .bio-cta {
   margin-top: 60px;
+  /* it's a scroll target for the CV's Contact pill */
+  scroll-margin-top: 40px;
 }
 /* The copy reads as part of the CTA, not as more bio prose, so it takes
    the link's size and colour. Two classes so it outranks ".about-bio p"
@@ -948,7 +977,7 @@ body.homepage .about-bio .cv-divider {
 .cv-fact li:has(.cv-fact-years) + li { margin-top: 20px; }
 .cv-fact a { color: var(--hero-orange); text-decoration: none; }
 .cv-fact a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.cv-fact-years { display: block; font-size: 13px; opacity: 0.55; margin-bottom: 4px; }
+.cv-fact-years { display: block; font-size: 13px; color: var(--hero-orange); margin-bottom: 4px; }
 
 /* main column carries a vertical rule down its left edge, centred
    in the 40px gutter — the vertical counterpart of the site's
@@ -1045,7 +1074,10 @@ body.homepage .about-bio .cv-divider {
   color: #1E1E1E;
 }
 .consultancy-list .grid {
-  padding-block: 72px 120px;
+  /* bottom matches the homepage's about section exactly — same clamp,
+     so the gap above the footer is identical on all three pages and
+     scales with width rather than sitting at a flat 120px */
+  padding-block: 72px clamp(64px, 8vw, 120px);
 }
 /* Matches the homepage bio column's width/position exactly (body.homepage
    .about-bio.cv-main, col 3 / span 6 — centred on the 10-column grid)
@@ -1060,6 +1092,11 @@ body.homepage .about-bio .cv-divider {
    page runs down one centred measure instead of the intro sitting in a
    wider, left-aligned block above it. Scoped to .consultancy-page — the
    CV page carries the same data-category but keeps its sidebar layout. */
+/* a bit more air between the header and the page title than the 8px
+   the shared .category-intro grid gives */
+body.consultancy-page .category-intro .grid {
+  padding-block: 48px 72px;
+}
 body.consultancy-page .category-intro h1,
 body.consultancy-page .category-intro .standfirst {
   grid-column: 1 / -1;
@@ -1079,9 +1116,31 @@ body.consultancy-page .category-intro .bio-cta {
   width: min(670px, 100%);
   margin-inline: auto;
 }
+/* the jump-to-publications pill sits in the intro block rather than
+   the old full-width .quick-nav band, so it needs the same column
+   placement as everything else there */
+body.cv-page .category-intro .quick-nav-links {
+  grid-column: 1 / -1;
+  width: min(670px, 100%);
+  margin-inline: auto;
+  margin-top: 52px;
+}
+/* the heading is the scroll target now, so it carries the offset the
+   old <h2> did */
+.section-label[id] {
+  scroll-margin-top: 32px;
+}
 
 .consultancy-entry {
   margin-bottom: 48px;
+}
+/* the last entry's trailing margin would stack on top of the section's
+   own bottom padding, making the gap above the footer larger here than
+   on the homepage */
+.consultancy-entry:last-child,
+.cv-block:last-child,
+.consultancy-entry:has(> .rule) {
+  margin-bottom: 0;
 }
 .consultancy-entry h3 {
   font-size: 22px;
@@ -1094,7 +1153,7 @@ body.consultancy-page .category-intro .bio-cta {
    uses home.css, not article.css */
 .entry-meta {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 1.8px;
   text-transform: uppercase;
   opacity: 0.6;
@@ -1126,6 +1185,21 @@ body.consultancy-page .category-intro .bio-cta {
 .consultancy-entry .entry-meta {
   font-size: 13px;
   line-height: 1.5;
+}
+/* CV experience entries carry the dates on their own line under the
+   organisation, picked out in the coral accent. Two classes so the
+   18px .consultancy-entry p rule doesn't win. */
+.consultancy-entry .entry-dates {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--hero-orange);
+  margin-bottom: 16px;
+}
+.entry-meta:has(+ .entry-dates) {
+  margin-bottom: 2px;
 }
 
 /* ============================================================
@@ -1172,13 +1246,13 @@ body.cv-page .cv-sidebar {
    these rules sit in .cv-block rather than inside an entry */
 .cv-block > .rule {
   width: 100%;
-  margin-top: 40px;
-  margin-bottom: 56px;
+  margin-top: 64px;
+  margin-bottom: 64px;
   color: #1E1E1E;
 }
 .section-label {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 2.4px;
   text-transform: uppercase;
   opacity: 0.55;
@@ -1205,8 +1279,13 @@ body.cv-page .cv-sidebar {
   margin-bottom: 28px;
 }
 .consultancy-entry .rule {
-  margin-top: 40px;
-  margin-bottom: 0;
+  /* equal air on both sides. The rule's own bottom margin used to
+     collapse into .consultancy-entry's 48px, leaving 64 above / 48
+     below — zeroing the parent's margin on rule-bearing entries lets
+     this 64 stand, without widening the gap between the CV's entries,
+     which carry no rule. */
+  margin-top: 64px;
+  margin-bottom: 64px;
   color: #1E1E1E;
   /* full column width here, unlike the 295px stub .rule uses inside
      cards, so the entries read as a properly divided list */
@@ -1275,7 +1354,7 @@ body.cv-page .cv-sidebar {
   align-items: center;
   gap: 12px;
   width: min(295px, 100%);
-  margin-block: 40px;
+  margin-block: 64px;
 }
 .rule::after {
   content: "";
@@ -1285,8 +1364,8 @@ body.cv-page .cv-sidebar {
   order: 1;
 }
 .rule .end {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border: 1px solid currentColor;
   border-radius: 50%;
   flex-shrink: 0;
@@ -1383,9 +1462,15 @@ footer .footer-top {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: flex-start;
+  /* menu sits on the wordmark's own baseline (2026-09-01) rather than
+     being top-aligned; the icon bubbles have no text of their own, so
+     they're centred against that line instead */
+  align-items: baseline;
   gap: 40px;
   padding-block: 64px 48px;
+}
+footer .social {
+  align-self: center;
 }
 /* Wordmark (24px, matched to the header's) and the nav links (15px)
    share the same grid-row
@@ -1396,16 +1481,21 @@ footer .footer-top {
    Measured 2026-09-01 via canvas font metrics (not just DOM rects,
    which only report the line-box, not glyph-ink position). */
 footer .wordmark {
-  /* re-measured 2026-09-01 when the wordmark came down from 32px to
-     24px to match the header: the old -5px was calibrated for 32px
-     and over-corrected by 2.4px at the smaller size */
-  margin-top: -2.6px;
+  /* no optical nudge needed now the row aligns on real baselines
+     rather than on box tops */
+  margin-top: 0;
 }
 footer .footer-nav {
-  grid-column: 6 / span 2;
+  /* horizontal at every width (2026-09-01) — it used to stack into a
+     column above 900px, which read as the menu wrapping rather than as
+     a deliberate list now the footer is a content-sized flex row.
+     margin-left:auto pushes it (and the social bubbles after it) over
+     to the right, leaving the wordmark alone on the left. */
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin-left: auto;
 }
 footer .footer-nav a {
   color: inherit;
@@ -1460,7 +1550,7 @@ footer .copyright {
   bottom: 32px;
   width: 48px;
   height: 48px;
-  border: none;
+  border: 1px solid #FFFFFF;
   border-radius: 50%;
   background: #17181A;
   color: #FFFFFF;
@@ -1587,6 +1677,6 @@ footer .copyright {
   footer .social {
     grid-column: 1 / -1;
   }
-  footer .footer-nav { flex-direction: row; flex-wrap: wrap; gap: 20px; }
+  footer .footer-nav { gap: 20px; }
   footer .social { justify-content: flex-start; }
 }
