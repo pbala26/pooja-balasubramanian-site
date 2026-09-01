@@ -37,6 +37,13 @@
   --hero-green: #1B3720;
   --hero-ochre: #FF8D3C;
   --hero-orange: #FF564B;
+
+  /* Gap between the photo bubble's right edge and the column's left
+     edge. The bubble's width subtracts it and the homepage divider sits
+     at half of it, so the line always splits the gap evenly. Must stay
+     on :root — it lived on body.homepage briefly, which left the CV's
+     bubble with an invalid width declaration and sizing to its text. */
+  --bubble-gap: 84px;
   --hero-purple: #24105D;
   --hero-yellow: #F4C744;
   --hero-sky: #A9D6E5;
@@ -393,7 +400,11 @@ body.homepage .category-intro .intro-text {
    the boxes. clamp's own min/max keep it sane on narrow screens
    without a separate mobile override. */
 body.homepage .category-intro h1 {
-  font-size: clamp(48px, 9vw, 140px);
+  /* 10% down from the original clamp(48px, 9vw, 140px) (2026-09-01).
+     The breaks after "Economy", "Policy" and "Development" are explicit
+     in the markup now — at the smaller size the last three lines would
+     otherwise re-flow, since more words fit per line. */
+  font-size: clamp(43px, 8.1vw, 126px);
   line-height: 1.02;
 }
 /* NOT a full-page hero — a bio section follows it below (same
@@ -455,7 +466,7 @@ body.homepage .category-intro .hero-row {
      edge to edge, which on a wide window spreads the tags further than
      intended. inset:0 supplies left/right:0, so an explicit width plus
      auto inline margins centres the box within the row rather than
-     stretching it. Below 1280 the 100%% branch takes over and it just
+     stretching it. Below 1280 the 100% branch takes over and it just
      matches the row as before. */
   position: absolute;
   inset: 0;
@@ -554,14 +565,9 @@ body.homepage .card.size-xs {
   display: none;
 }
 
-/* TEMPORARY (2026-09-01): consultancy-portfolio rebuild — no portrait
-   photo yet, and the Substack CTA is paused for now. Both hidden via
-   CSS only (markup stays in index.html) so either can come straight
-   back later by deleting these two rules. Hiding .about-photo does
-   NOT reflow .about-bio into its place — .about-bio keeps its own
-   fixed grid-column (via .cv-main), so the rest of the section stays
-   exactly where it was, just with a blank column on the left. */
-body.homepage .about-photo,
+/* TEMPORARY (2026-09-01): the Substack CTA is paused for now. Hidden
+   via CSS only (markup stays in index.html) so it can come straight
+   back by deleting this rule. */
 body.homepage .substack-box {
   display: none;
 }
@@ -597,8 +603,25 @@ body.homepage .substack-box {
   padding-block: calc(var(--hero-space) * 0.6) clamp(64px, 8vw, 120px);
   align-items: start;
 }
-.about-photo {
-  grid-column: 1 / span 2;
+/* Portrait bubble, in the left margin beside the centred main column on
+   both the homepage and the CV. Pinned to grid-row 1 so it shares the
+   row with the full-width column rather than being pushed below it by
+   auto-placement. Below 1150px the margin is too narrow to hold it and
+   it pops to the top of the column instead (see the media query at the
+   end of this file) — the same threshold the CV's right-hand column
+   uses, so both margins clear at once. */
+.photo-bubble {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  justify-self: start;
+  align-self: start;
+  /* Width is derived from where the column's divider line falls, not
+     from grid tracks: the centred column leaves (100% - 670px)/2 of
+     margin, the divider hangs 60px inside that, and this keeps a
+     further 24px clear of it. On tracks the bubble was 205px wide with
+     the divider at 237px and its own right edge at 245px — overlapping.
+     Caps at 205px so it stops growing on wide screens. */
+  width: min(205px, calc((100% - 670px) / 2 - var(--bubble-gap)));
   aspect-ratio: 1 / 1;
   border: 1px solid currentColor;
   border-radius: 50%;
@@ -637,13 +660,19 @@ body.homepage .substack-box {
    margin-inline:auto keeps it centred on the page. Below ~750px
    viewport the 100% branch takes over and it shrinks with the frame. */
 body.homepage .about-bio.cv-main {
+  grid-row: 1;
   grid-column: 1 / -1;
   width: min(670px, 100%);
   margin-inline: auto;
 }
-/* pulled closer to the bio text than the CV page's own -95px (2026-09-01) */
+/* dead centre of the gap between the photo bubble and the text: the
+   bubble stops one full --bubble-gap short of the column, so half of
+   that lands the line equidistant from both (2026-09-01, was a flat
+   -60px, which sat 24px off the bubble and 60px off the text) */
 body.homepage .about-bio .cv-divider {
-  left: -60px;
+  /* half the gap, then back off half the rule's own 10px width so it's
+     the LINE that's centred, not the element's left edge */
+  left: calc(var(--bubble-gap) / -2 - 5px);
 }
 .about-bio p {
   font-size: 18px;
@@ -1072,7 +1101,7 @@ body.homepage .about-bio .cv-divider {
    .body-copy (col 3 / span 6) for visual parity with a real article
    page, since each entry reads like a condensed article abstract.
    ============================================================ */
-/* Entries sit on a 50%% tint of the page's own --bg-tint (i.e. that
+/* Entries sit on a 50% tint of the page's own --bg-tint (i.e. that
    colour mixed half-and-half with white, the site's usual tint move),
    so the list reads as its own band below the intro rather than the
    page being one flat wash top to bottom. */
@@ -1231,7 +1260,36 @@ body.cv-page .cv-sidebar {
   grid-column: 9 / -1;
   align-self: start;
 }
+/* The CTA is a sibling of the column rather than its last child, so it
+   can be ordered independently: it sits on its own row under the whole
+   band on desktop, and once the side column drops below the main one it
+   follows on after it rather than being stranded in between. */
+/* Wherever the CTA is a direct child of the band's grid rather than a
+   child of the column, it needs an explicit placement — without one it
+   is auto-placed into a single 1fr track and collapses to a sliver. */
+.consultancy-list .bio-cta {
+  grid-column: 1 / -1;
+  width: min(670px, 100%);
+  margin-inline: auto;
+}
+/* the CV's three-across row is row 1, so its CTA takes the row below */
+body.cv-page .consultancy-list .bio-cta {
+  grid-row: 2;
+}
 @media (max-width: 1150px) {
+  /* margin's gone — the bubble sits at the top of the column instead */
+  .photo-bubble {
+    grid-row: auto;
+    grid-column: 1 / -1;
+    order: 0;
+    width: 160px;
+    /* left edge lines up with the centred column's own left edge, and
+       goes flush left once the column itself is full width */
+    margin: 0 auto 64px max(0px, calc((100% - 670px) / 2));
+  }
+  body.homepage .about-bio.cv-main {
+    grid-row: auto;
+  }
   body.cv-page .consultancy-body,
   body.cv-page .cv-sidebar {
     grid-row: auto;
@@ -1243,6 +1301,10 @@ body.cv-page .cv-sidebar {
     margin-top: 56px;
     width: min(670px, 100%);
     margin-inline: auto;
+  }
+  body.cv-page .consultancy-list .bio-cta {
+    grid-row: auto;
+    order: 3;
   }
 }
 
@@ -1284,6 +1346,31 @@ body.cv-page .cv-sidebar {
    of the citation list it follows */
 .cv-pubs + p {
   margin-top: 24px;
+}
+
+/* Two referees side by side on the publications page, stacking on
+   narrow screens. Same type sizes as the CV's side column. */
+.pub-references {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 40px;
+}
+.pub-reference-name {
+  font-weight: 500;
+}
+.pub-reference-name,
+.pub-reference-contact,
+.pub-reference-role {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.pub-reference-role {
+  opacity: 0.7;
+}
+@media (max-width: 700px) {
+  .pub-references {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 /* education entries are title + meta only, so they don't need the
    48px gap the described experience entries use */
@@ -1673,7 +1760,6 @@ footer .copyright {
      just a stray 56px sitting in the hero's bottom gap here. */
   body.homepage .about-bio.cv-main { margin-top: 0; }
   .cv-divider { display: none; }
-  .about-photo { grid-column: 1 / span 3; width: 140px; }
   /* .about-bio's mobile stacking comes from .cv-main's own rule above
      (grid-column:1/-1, margin-top:56px) since it carries that class */
   footer .footer-nav,
