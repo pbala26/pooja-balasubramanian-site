@@ -54,7 +54,7 @@
 [data-category="workshop"]   { --bg: #1B3720; --fg: #FFFFFF; --bg-tint: #D1D7D2; } /* Education — Green */
 [data-category="exhibition"] { --bg: #FF8D3C; --fg: #1E1E1E; --bg-tint: #FFE8D8; } /* Exhibition — Ochre */
 [data-category="film"]       { --bg: #FF564B; --fg: #1E1E1E; --bg-tint: #FFDDDB; } /* Film — Orange */
-[data-category="about"]      { --bg: #24105D; --fg: #FFFFFF; --bg-tint: #D3CFDF; } /* About/CV — Purple */
+[data-category="about"]      { --bg: #24105D; --fg: #FFFFFF; --bg-tint: color-mix(in srgb, var(--hero-purple) 20%, white); } /* About/CV — Purple (2026-09-01: unified with homepage tint formula, nudged a little more saturated so Consultancy/CV read pale purple rather than pale grey) */
 
 /* Homepage-only background — a soft 15% tint of purple (--hero-purple)
    rather than a tint of --bg (which would be Wine, since body carries
@@ -66,7 +66,20 @@
    touching the locked 20% tint used everywhere else on the site
    (category listing headers, .subcategory, .cv-body, etc). */
 body.homepage {
-  --bg-tint: color-mix(in srgb, var(--hero-purple) 15%, white);
+  --bg-tint: color-mix(in srgb, var(--hero-purple) 20%, white);
+  /* Single source for the hero band's vertical rhythm (2026-09-01).
+     Everything around the big statement is derived from this one
+     value so the gaps have a stated logic instead of being whatever
+     min-height happened to leave over:
+       - guaranteed space above and below the text = --hero-space
+         (the hero row's own padding, so it survives even when the
+         text grows tall enough to eat all the leftover height)
+       - the gap BELOW is then deliberately larger than the one above
+         by a fixed 0.6x of the token (added by .about-section's top
+         padding), because an optically equal pair reads bottom-light
+       - it scales with viewport WIDTH, so mobile is tight and desktop
+         is generous without either being hand-tuned separately. */
+  --hero-space: clamp(20px, 3vw, 56px);
 }
 
 /* On category listing pages, the header/intro band stays the
@@ -118,7 +131,7 @@ body {
   flex-direction: column;
 }
 
-a { color: inherit; }
+a { color: var(--hero-orange); } /* bright coral, 2026-09-01 — nav/wordmark/footer-nav/icons keep their own higher-specificity color:inherit rules below, unaffected */
 
 /* ============================================================
    8-COLUMN GRID — 1440 frame / 40 margin / 40 gutter.
@@ -148,7 +161,8 @@ header {
    instead — same colour language as .subcategory/.card-tint elsewhere
    — with dark text instead of the category's own --fg, since --fg was
    picked for contrast against the full-strength colour, not the tint. */
-body.homepage header {
+body.homepage header,
+[data-category="about"] header {
   background: var(--bg-tint);
   color: #1E1E1E;
 }
@@ -161,9 +175,13 @@ header .bar {
 }
 
 /* decorative rule spanning the full content width, under the menu —
-   same marker—line—marker language as the card dividers */
+   same marker—line—marker language as the card dividers. Hidden
+   site-wide (2026-09-01) per "no line under the header anywhere" —
+   markup/rule kept rather than deleted so it can come straight back
+   by removing this one display:none. */
 .menu-rule {
   padding-block: 0 32px;
+  display: none;
 }
 /* the identity hero sits directly below the header on the homepage —
    no need for this rule to also mark that seam */
@@ -194,17 +212,24 @@ body.homepage .menu-rule {
 .menu-rule-line .end:last-child  { order: 2; }
 .wordmark {
   grid-column: 1 / span 5;
-  font-size: 32px;
+  /* Header and footer wordmarks share this one size and must never
+     diverge. 24px is the size the HEADER layout wants (it sits beside
+     15px nav links / the hamburger); the footer, which used to run at
+     32px, is sized down to match rather than the header being sized
+     up. The narrow-screen override in the media query at the end of
+     the file also targets plain .wordmark, so the pair always moves
+     together. */
+  font-size: 24px;
   font-weight: 500;
   text-decoration: none;
   color: inherit;
 }
-/* header's instance only — sitewide, every page — smaller than the
-   32px base above. Scoped to "header .wordmark" specifically so the
-   footer's wordmark (same class, reused there) keeps its full size. */
-header .wordmark {
-  font-size: 24px;
-}
+/* Header and footer wordmarks are deliberately the SAME size at every
+   breakpoint (2026-09-01) — the header used to carry a 24px override
+   against the 32px base, which left the name visibly smaller up top
+   than in the footer. Both now take the 32px base, matching what
+   article.css has always done. If either ever needs resizing, change
+   the .wordmark base so the pair moves together. */
 nav {
   grid-column: 6 / -1;
   display: flex;
@@ -220,6 +245,12 @@ nav a {
   text-transform: uppercase;
 }
 nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Hamburger button — desktop shows the nav inline and never needs this;
+   it only appears below the 900px breakpoint (see the media query at the
+   end of this file), where the nav collapses behind it rather than
+   stacking onto a second line under the wordmark. */
+.nav-toggle { display: none; }
 
 /* ============================================================
    QUICK-NAV — sits just below the hero, left-aligned, on the
@@ -291,6 +322,17 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   background: var(--bg);
   color: var(--fg);
 }
+/* Consultancy + CV (data-category="about") match the homepage's own
+   pale-tint hero/header treatment (2026-09-01) instead of the bold
+   solid-colour band every other category page keeps — these three
+   pages together are the whole (post-restructure) site now, so they
+   read as one consistent, pale-purple identity rather than the
+   About/CV pages standing out as a dark, bold-coloured category. */
+[data-category="about"] .category-intro {
+  background: var(--bg-tint);
+  color: #1E1E1E;
+}
+
 /* Homepage reuses this block for the site's identity statement — same
    pale tint as the header just above it (body.homepage header), so
    the two read as one continuous band. No portrait photo for now;
@@ -332,9 +374,27 @@ body.homepage .category-intro h1 {
    .hero-diagram and keeps any node whose bob motion drifts near the
    edge from poking past it. */
 body.homepage .category-intro .hero-row {
-  min-height: calc(60vh + 150px);
+  /* was calc(60vh + 150px) originally, trimmed to calc(45vh + 80px)
+     2026-09-01 (too much outer whitespace above/below the whole hero
+     band) then nudged back up slightly same day — that version left
+     the row barely taller than the h1 text, so the diagram tags had
+     no room to extend above/below the text block itself. This splits
+     the difference. */
+  /* min() with a width-aware term (2026-09-01): the vh term alone
+     balloons the band in a tall, narrow window — 70vh/52vh of a
+     1234px-tall viewport is ~600-860px of band for ~270px of text,
+     which reads as a huge empty void. The vw term caps it so the
+     height stays proportional to how wide the hero actually is.
+     On a normal desktop (e.g. 1440x900) the vh term is still the
+     smaller of the two, so the tuned desktop proportions are
+     unchanged; the cap only bites when the window is tall for its
+     width. */
+  min-height: min(calc(52vh + 110px), calc(45vw + 160px));
   align-items: center;
-  padding-block: 0;
+  /* guarantees breathing space around the text even when the text is
+     tall enough that centring leaves nothing over; while min-height
+     governs, this sits inside it and costs no extra height */
+  padding-block: var(--hero-space);
   position: relative;
   overflow: hidden;
 }
@@ -357,8 +417,16 @@ body.homepage .category-intro .hero-row {
    with the hero text is expected here, not avoided.
    ============================================================ */
 .hero-diagram {
+  /* Capped at 1280px (2026-09-01) — left uncapped it fills hero-row
+     edge to edge, which on a wide window spreads the tags further than
+     intended. inset:0 supplies left/right:0, so an explicit width plus
+     auto inline margins centres the box within the row rather than
+     stretching it. Below 1280 the 100%% branch takes over and it just
+     matches the row as before. */
   position: absolute;
   inset: 0;
+  width: min(1280px, 100%);
+  margin-inline: auto;
   z-index: 2;
   pointer-events: none;
 }
@@ -414,11 +482,33 @@ body.homepage .category-intro .hero-row {
 .hero-node[data-color="sky"]      .hero-node-inner { background: var(--hero-sky);      color: #1E1E1E; }
 .hero-node[data-color="lavender"] .hero-node-inner { background: var(--hero-lavender); color: #1E1E1E; }
 .hero-node[data-color="peach"]    .hero-node-inner { background: var(--hero-peach);    color: #1E1E1E; }
-/* dense diagram doesn't fit a stacked mobile hero — text alone carries
-   the section below 900px, same width the .category-intro h1/standfirst
-   collapse to just below */
+/* MOBILE (2026-08-30): the diagram used to be hidden outright below
+   900px — the full nine-box web genuinely doesn't fit a phone. It now
+   runs there, thinned to six: the three nodes below are dropped, which
+   both opens up real space between the survivors and removes the
+   longest word ("self determination"), the one that can't fit a
+   2-column phone layout at any sensible size. The six kept are exactly
+   the five locked palette tokens (wine/orange/purple/ochre/green) plus
+   lavender.
+
+   This is the ONLY place the mobile subset is defined — hero-diagram.js
+   reads computed display and adapts its grid, edge list and motion to
+   whatever is actually visible, so changing which words appear on
+   phones is a CSS-only edit here. Adding/removing a [data-mobile]
+   attribute in index.html is all that's needed to reshuffle the set. */
 @media (max-width: 900px) {
-  .hero-diagram { display: none; }
+  .hero-node[data-mobile="hide"] { display: none; }
+  /* smaller tags so six boxes + their arcs read as a web rather than a
+     pile — the desktop clamp bottoms out at 13px, which is still chunky
+     against a ~335px usable column */
+  .hero-node-inner {
+    font-size: 11px;
+    padding: 6px 10px;
+    letter-spacing: 0.1px;
+  }
+  /* thinner arcs to match the smaller boxes; 1px hairlines read heavy
+     at phone scale against this much less line length */
+  .hero-diagram-lines path { stroke-width: 0.75; }
 }
 
 /* TEMPORARY (2026-07-30): hide the featured-grid + article-card
@@ -427,6 +517,18 @@ body.homepage .category-intro .hero-row {
    block to bring the rest back. */
 body.homepage .category-intro > .grid:not(.hero-row),
 body.homepage .card.size-xs {
+  display: none;
+}
+
+/* TEMPORARY (2026-09-01): consultancy-portfolio rebuild — no portrait
+   photo yet, and the Substack CTA is paused for now. Both hidden via
+   CSS only (markup stays in index.html) so either can come straight
+   back later by deleting these two rules. Hiding .about-photo does
+   NOT reflow .about-bio into its place — .about-bio keeps its own
+   fixed grid-column (via .cv-main), so the rest of the section stays
+   exactly where it was, just with a blank column on the left. */
+body.homepage .about-photo,
+body.homepage .substack-box {
   display: none;
 }
 
@@ -442,7 +544,23 @@ body.homepage .card.size-xs {
   color: #1E1E1E;
 }
 .about-section .grid {
-  padding-block: 96px 120px;
+  /* top value trimmed 2026-09-01 (was 96px) — the hero row already
+     leaves its own roughly-symmetric whitespace below the h1 (from
+     centering it in a row taller than the text), so stacking a full
+     96px of section padding on top of that made the gap below the
+     hero text noticeably bigger than the gap above it (measured from
+     the header TEXT's own bottom edge, not the <header> element's
+     box, which has extra trailing space under the text before the
+     box itself ends). 6px closes the remainder of that gap — kept as
+     padding (inside the section's own --bg-tint background), not a
+     margin on .about-section itself: a margin here would create a
+     gap between .category-intro and .about-section showing the
+     page's raw dark background underneath instead of more of this
+     section's own tint (that was a real bug in an earlier pass at
+     this, not just theoretical — showed up as a thin black bar).
+     Site's own vh-based hero row won't track this pixel value at
+     every viewport size, but it's close. */
+  padding-block: calc(var(--hero-space) * 0.6) clamp(64px, 8vw, 120px);
   align-items: start;
 }
 .about-photo {
@@ -467,13 +585,96 @@ body.homepage .card.size-xs {
    main split) exactly rather than re-declaring an equivalent — same
    mobile stacking behaviour comes free from .cv-main's own responsive
    rule too. .about-bio itself only adds this section's own prose
-   typography on top. */
+   typography on top.
+
+   Homepage-only override (2026-09-01): one column wider than the CV
+   page's own cv-main (span 6, not 5) and centred on the 10-column grid
+   (cols 3-8: 2 empty columns either side) rather than sharing cv-main's
+   off-centre sidebar-driven start column. Selector needs body.homepage
+   + both classes to outrank the bare .cv-main rule above regardless of
+   source order. */
+/* Fixed measure (2026-09-01): 670px holds the bio's ideal line length —
+   "I'm Dr. Pooja Balasubramanian, an independent consultant and
+   researcher" as one full line. Measured empirically: below 655px
+   "researcher" wraps, at 700px "with" joins the line, so 670 sits
+   mid-window and survives small font-rendering differences between
+   machines. grid-column spans the full grid (not cols 3-8) so the
+   explicit width has slack to hold against as the viewport narrows;
+   margin-inline:auto keeps it centred on the page. Below ~750px
+   viewport the 100% branch takes over and it shrinks with the frame. */
+body.homepage .about-bio.cv-main {
+  grid-column: 1 / -1;
+  width: min(670px, 100%);
+  margin-inline: auto;
+}
+/* pulled closer to the bio text than the CV page's own -95px (2026-09-01) */
+body.homepage .about-bio .cv-divider {
+  left: -60px;
+}
 .about-bio p {
   font-size: 18px;
   line-height: 1.65;
 }
+
+/* CTA under the homepage bio (2026-09-01). The link and its icon track
+   the header wordmark's size exactly — same clamp, so "roughly the size
+   of the header name" holds at every width instead of only on desktop —
+   which also stops the address overflowing the column on a phone. Icon
+   is sized in em so it scales with the text automatically. Colour comes
+   from the base coral link rule. */
+.bio-cta {
+  margin-top: 60px;
+}
+/* The copy reads as part of the CTA, not as more bio prose, so it takes
+   the link's size and colour. Two classes so it outranks ".about-bio p"
+   (18px) on the homepage while still applying on the Consultancy and CV
+   pages, where the same block sits under the standfirst. */
+.bio-cta .bio-cta-copy {
+  font-size: clamp(16px, calc(7.6vw - 7px), 24px);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--hero-orange);
+  margin-bottom: 14px;
+}
+.bio-cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: clamp(16px, calc(7.6vw - 7px), 24px);
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 5px;
+  /* an email address has no natural break point, so let it break rather
+     than push the column sideways if it ever runs out of room */
+  overflow-wrap: anywhere;
+}
+.bio-cta-link svg {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+.bio-cta-link:hover {
+  opacity: 0.7;
+}
 .about-bio p + p {
   margin-top: 24px;
+}
+/* "I work across:" list — same prose scale as .about-bio p, just with
+   a marker; sits between two paragraphs so it needs margin on both
+   sides rather than relying on the p+p rule above. */
+.about-bio ul {
+  list-style: disc;
+  padding-left: 1.3em;
+  margin: 20px 0 24px;
+}
+.about-bio li {
+  font-size: 18px;
+  line-height: 1.55;
+}
+.about-bio li + li {
+  margin-top: 10px;
 }
 /* inline Writing/Film/Exhibition/Education mentions — orange rather
    than var(--bg) (which is Wine, since body carries
@@ -732,7 +933,7 @@ body.homepage .card.size-xs {
 /* small grey label — same treatment as .subcategory-heading / .meta
    elsewhere on the site: uppercase, letter-spaced, muted via opacity */
 .cv-fact h3 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   letter-spacing: 2.8px;
   text-transform: uppercase;
@@ -745,7 +946,7 @@ body.homepage .card.size-xs {
 /* dated, multi-line entries (e.g. Education) need more breathing
    room between them than short single-line facts do */
 .cv-fact li:has(.cv-fact-years) + li { margin-top: 20px; }
-.cv-fact a { color: inherit; text-decoration: none; }
+.cv-fact a { color: var(--hero-orange); text-decoration: none; }
 .cv-fact a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .cv-fact-years { display: block; font-size: 13px; opacity: 0.55; margin-bottom: 4px; }
 
@@ -763,6 +964,7 @@ body.homepage .card.size-xs {
   bottom: 0;
   left: -95px;
   width: 10px;
+  /* homepage override below moves this closer to the bio text */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -790,7 +992,7 @@ body.homepage .card.size-xs {
 .cv-job-years { font-size: 12px; opacity: 0.55; margin-bottom: 8px; }
 .cv-job h3 { font-size: 22px; font-weight: 500; margin-bottom: 16px; }
 .cv-job p { font-size: 14px; line-height: 1.6; }
-.cv-job a { color: var(--bg); font-weight: 500; text-decoration: none; }
+.cv-job a { color: var(--hero-orange); font-weight: 500; text-decoration: none; }
 .cv-job a:hover { text-decoration: underline; }
 
 /* publications — same column, but as a compact reading-list rather
@@ -819,8 +1021,200 @@ body.homepage .card.size-xs {
   line-height: 1.5;
   margin-bottom: 16px;
 }
-.cv-pub-list a { color: var(--bg); font-weight: 500; text-decoration: none; }
+.cv-pub-list a { color: var(--hero-orange); font-weight: 500; text-decoration: none; }
 .cv-pub-list a:hover { text-decoration: underline; }
+
+/* ============================================================
+   CONSULTANCY PAGE (added 2026-09-01)
+   ------------------------------------------------------------
+   Single-column list of consultancy/research assignments, sitting
+   below the page's own .category-intro (h1 + .standfirst, same
+   pattern the Education listing page already uses). Reuses the
+   site's existing prose scale (.about-bio's 18px/1.65) and the
+   .meta-line / .meta-box "links" treatment from article.css rather
+   than inventing new type — same content width as article.css's
+   .body-copy (col 3 / span 6) for visual parity with a real article
+   page, since each entry reads like a condensed article abstract.
+   ============================================================ */
+/* Entries sit on a 50%% tint of the page's own --bg-tint (i.e. that
+   colour mixed half-and-half with white, the site's usual tint move),
+   so the list reads as its own band below the intro rather than the
+   page being one flat wash top to bottom. */
+.consultancy-list {
+  background: color-mix(in srgb, var(--bg-tint) 50%, white);
+  color: #1E1E1E;
+}
+.consultancy-list .grid {
+  padding-block: 72px 120px;
+}
+/* Matches the homepage bio column's width/position exactly (body.homepage
+   .about-bio.cv-main, col 3 / span 6 — centred on the 10-column grid)
+   for consistency across the two prose-heavy pages on the site. */
+.consultancy-body {
+  grid-column: 1 / -1;
+  width: min(670px, 100%);
+  margin-inline: auto;
+}
+
+/* Title + standfirst share the entries' column (2026-09-01) so the whole
+   page runs down one centred measure instead of the intro sitting in a
+   wider, left-aligned block above it. Scoped to .consultancy-page — the
+   CV page carries the same data-category but keeps its sidebar layout. */
+body.consultancy-page .category-intro h1,
+body.consultancy-page .category-intro .standfirst {
+  grid-column: 1 / -1;
+  width: min(670px, 100%);
+  margin-inline: auto;
+}
+body.consultancy-page .category-intro .standfirst {
+  font-size: 24px;
+  line-height: 1.45;
+}
+/* The CTA block sits directly in .category-intro's 10-column grid on
+   these pages, so it needs an explicit placement — without one it gets
+   auto-placed into a single 1fr track and the text collapses into a
+   one-word-wide sliver. */
+body.consultancy-page .category-intro .bio-cta {
+  grid-column: 1 / -1;
+  width: min(670px, 100%);
+  margin-inline: auto;
+}
+
+.consultancy-entry {
+  margin-bottom: 48px;
+}
+.consultancy-entry h3 {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+/* org / role — year (— link), same small tracked-uppercase treatment
+   as article.css's .meta-line, just declared here too since this page
+   uses home.css, not article.css */
+.entry-meta {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 16px;
+}
+.entry-link {
+  margin-bottom: 16px;
+}
+.entry-link a {
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+  color: var(--hero-orange);
+}
+.entry-link a:hover { opacity: 0.7; }
+.consultancy-entry p {
+  font-size: 18px;
+  line-height: 1.65;
+}
+.consultancy-entry .entry-skills {
+  margin-top: 16px;
+  opacity: 0.85;
+}
+/* .entry-meta is a <p> inside .consultancy-entry, so the 18px body rule
+   above outranks the bare .entry-meta class and had been overriding its
+   size all along — this restates it at the matching specificity. */
+.consultancy-entry .entry-meta {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   CV PAGE — reuses the Consultancy page's centred column, entry
+   blocks, caps meta line and full-width rules (2026-09-01 rebuild);
+   these are the few pieces it adds on top: section labels above each
+   group, and plain lists for expertise/publications.
+   ============================================================ */
+/* CV page: the main column keeps exactly the centred 670px measure the
+   Consultancy page and homepage use (inherited from .consultancy-body),
+   and the small supporting column sits in the right-hand margin beside
+   it. Both are pinned to grid-row 1 so they share a row — without that,
+   auto-placement refuses to overlap the full-width body and drops the
+   sidebar onto a row of its own below. Below 1150px the right margin is
+   too narrow to hold it, so it stacks — AFTER the main column, since a
+   short supporting column reads wrong above the substance. */
+body.cv-page .consultancy-body {
+  grid-row: 1;
+}
+body.cv-page .cv-sidebar {
+  grid-row: 1;
+  grid-column: 9 / -1;
+  align-self: start;
+}
+@media (max-width: 1150px) {
+  body.cv-page .consultancy-body,
+  body.cv-page .cv-sidebar {
+    grid-row: auto;
+    grid-column: 1 / -1;
+  }
+  body.cv-page .consultancy-body { order: 1; }
+  body.cv-page .cv-sidebar {
+    order: 2;
+    margin-top: 56px;
+    width: min(670px, 100%);
+    margin-inline: auto;
+  }
+}
+
+.cv-block {
+  margin-bottom: 8px;
+}
+/* same full-width divider treatment the consultancy entries get —
+   these rules sit in .cv-block rather than inside an entry */
+.cv-block > .rule {
+  width: 100%;
+  margin-top: 40px;
+  margin-bottom: 56px;
+  color: #1E1E1E;
+}
+.section-label {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-bottom: 28px;
+}
+.cv-list {
+  list-style: disc;
+  padding-left: 1.3em;
+  margin-bottom: 8px;
+}
+.cv-list li {
+  font-size: 18px;
+  line-height: 1.55;
+}
+.cv-list li + li {
+  margin-top: 10px;
+}
+.cv-pubs li {
+  line-height: 1.5;
+}
+/* education entries are title + meta only, so they don't need the
+   48px gap the described experience entries use */
+.cv-block .consultancy-entry:has(> .entry-meta:last-child) {
+  margin-bottom: 28px;
+}
+.consultancy-entry .rule {
+  margin-top: 40px;
+  margin-bottom: 0;
+  color: #1E1E1E;
+  /* full column width here, unlike the 295px stub .rule uses inside
+     cards, so the entries read as a properly divided list */
+  width: 100%;
+}
+@media (max-width: 900px) {
+  .consultancy-body { grid-column: 1 / -1; }
+}
 
 /* ============================================================
    CARD — full-bleed colour band (the <article>). The grid is
@@ -979,7 +1373,34 @@ footer {
   background: #17181A;
   color: #FFFFFF;
 }
-footer .footer-top { padding-block: 64px 48px; align-items: start; }
+/* Sized to content rather than fixed grid columns (2026-09-01): the
+   nav used to sit in a 2-column slot, and "CONSULTANCY" at 15px +
+   2.5px tracking is ~135px, so that slot ran out at ~900px viewport
+   and dumped the whole footer into its stacked layout while there was
+   still plenty of room. As a flex row the three blocks take the width
+   they need and only wrap at ~680px, where it genuinely is tight. */
+footer .footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  padding-block: 64px 48px;
+}
+/* Wordmark (24px, matched to the header's) and the nav links (15px)
+   share the same grid-row
+   top edge via align-items:start, but at very different font sizes
+   "normal" line-height distributes different amounts of leading above
+   the glyphs themselves, so the actual ink top of the name sat ~5px
+   below the ink top of "Consultancy" even though their boxes lined up.
+   Measured 2026-09-01 via canvas font metrics (not just DOM rects,
+   which only report the line-box, not glyph-ink position). */
+footer .wordmark {
+  /* re-measured 2026-09-01 when the wordmark came down from 32px to
+     24px to match the header: the old -5px was calibrated for 32px
+     and over-corrected by 2.4px at the smaller size */
+  margin-top: -2.6px;
+}
 footer .footer-nav {
   grid-column: 6 / span 2;
   display: flex;
@@ -1068,11 +1489,80 @@ footer .copyright {
    ============================================================ */
 @media (max-width: 900px) {
   :root { --margin: 20px; --gutter: 20px; }
-  body.homepage .category-intro .hero-row { min-height: auto; padding-block: 48px; }
+  /* was min-height:auto — the hero now carries the (thinned) word
+     diagram on mobile too, so it needs real vertical room for the boxes
+     to scatter and wander into instead of collapsing to text height.
+     70vh keeps the bio section's top edge visible on most phones, so it
+     still reads as "there's more below" rather than a full-screen
+     splash. */
   .back-to-top { right: 20px; bottom: 20px; width: 42px; height: 42px; }
   nav { gap: 24px; }
   .wordmark { grid-column: 1 / -1; margin-bottom: 20px; }
+  /* The name has to share one row with the hamburger here, so it scales
+     down just enough to keep fitting: the string is ~13x its own font
+     size wide, and the row can spare (viewport - 40px margins - 30px
+     button - 16px gap), which is what this vw term tracks. Applied to
+     plain .wordmark so the footer's copy shrinks in step and the two
+     never differ. */
+  .wordmark { font-size: clamp(16px, calc(7.6vw - 7px), 24px); }
   nav { grid-column: 1 / -1; justify-content: flex-start; flex-wrap: wrap; }
+
+  /* Header collapses to wordmark + hamburger on one row (2026-09-01).
+     Flex rather than the 10-col grid here: the bar only has two items
+     plus the nav panel, and flex-basis:100% on the nav is what drops it
+     onto its own full-width row when open, with no column arithmetic.
+     Scoped to "header nav"/"header .wordmark" so the footer's own
+     wordmark + .footer-nav (same element/class names) keep the stacked
+     treatment they already have below. */
+  header .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 16px;
+  }
+  header .wordmark { margin-bottom: 0; }
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* 20px-wide bars, tightened to 6px of air (was 8) so the three
+       lines read as one mark rather than three separate rules. The
+       button box stays 30px so the tap target doesn't shrink. */
+    gap: 6px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: currentColor;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  /* bar centres sit 7px apart (1px bar + 6px gap), so this folds the
+     outer two onto the middle line to make the X */
+  .nav-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  header nav {
+    display: none;
+    flex-basis: 100%;
+  }
+  header nav.is-open {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding-top: 28px;
+  }
   .category-intro h1,
   .category-intro .standfirst,
   .category-intro .intro-text {
@@ -1085,6 +1575,10 @@ footer .copyright {
   .size-l .thumb, .size-m .thumb { grid-column: 1 / span 5; justify-self: start; width: auto; margin-top: 32px; }
   .cv-sidebar, .cv-main { grid-column: 1 / -1; }
   .cv-main { margin-top: 56px; }
+  /* ...but the homepage bio only borrows .cv-main for its typography —
+     it has no sidebar stacked above it, so that separation margin is
+     just a stray 56px sitting in the hero's bottom gap here. */
+  body.homepage .about-bio.cv-main { margin-top: 0; }
   .cv-divider { display: none; }
   .about-photo { grid-column: 1 / span 3; width: 140px; }
   /* .about-bio's mobile stacking comes from .cv-main's own rule above
@@ -1093,7 +1587,6 @@ footer .copyright {
   footer .social {
     grid-column: 1 / -1;
   }
-  footer .wordmark { margin-bottom: 24px; }
-  footer .footer-nav { flex-direction: row; flex-wrap: wrap; gap: 20px; margin-bottom: 24px; }
+  footer .footer-nav { flex-direction: row; flex-wrap: wrap; gap: 20px; }
   footer .social { justify-content: flex-start; }
 }

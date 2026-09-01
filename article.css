@@ -43,6 +43,12 @@
   --chart-2: #1B3720; /* workshop — Education / Green */
   --chart-3: #FF8D3C; /* exhibition — Exhibition / Ochre */
   --chart-4: #FF564B; /* film — Film / Orange */
+
+  /* Brand-accent alias (2026-09-01) — same value as --chart-4/Film,
+     used for link colour site-wide (see the base `a` rule below).
+     Kept as its own token (not just reusing --chart-4) to match
+     home.css's naming, since --hero-orange is the name used there. */
+  --hero-orange: #FF564B;
   --chart-5: #24105D; /* about — About/CV / Purple */
   --chart-6: #17181A; /* footer off-black — 6th colour when needed */
 }
@@ -98,7 +104,7 @@ body {
   flex-direction: column;
 }
 
-a { color: inherit; }
+a { color: var(--hero-orange); } /* bright coral, 2026-09-01 — nav/wordmark/footer-nav/icons keep their own higher-specificity color:inherit rules below, unaffected */
 
 /* ============================================================
    8/10-COLUMN GRID — content boundary only, colour bands are
@@ -128,7 +134,14 @@ header .bar {
 }
 .wordmark {
   grid-column: 1 / span 5;
-  font-size: 32px;
+  /* Header and footer wordmarks share this one size and must never
+     diverge. 24px is the size the HEADER layout wants (it sits beside
+     15px nav links / the hamburger); the footer, which used to run at
+     32px, is sized down to match rather than the header being sized
+     up. The narrow-screen override in the media query at the end of
+     the file also targets plain .wordmark, so the pair always moves
+     together. */
+  font-size: 24px;
   font-weight: 500;
   text-decoration: none;
   color: inherit;
@@ -140,6 +153,7 @@ nav {
   gap: 32px;
 }
 nav a {
+  color: inherit;
   text-decoration: none;
   font-size: 15px;
   font-weight: 500;
@@ -148,7 +162,13 @@ nav a {
 }
 nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
-.menu-rule { padding-block: 0 32px; }
+/* Hamburger button — desktop shows the nav inline and never needs this;
+   it only appears below the 900px breakpoint (see the media query at the
+   end of this file), where the nav collapses behind it rather than
+   stacking onto a second line under the wordmark. */
+.nav-toggle { display: none; }
+
+.menu-rule { padding-block: 0 32px; display: none; } /* hidden site-wide 2026-09-01 — no line under the header anywhere */
 .menu-rule-line {
   grid-column: 1 / -1;
   display: flex;
@@ -480,7 +500,9 @@ nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
   float: left;
   font-family: "Work Sans", sans-serif;
   font-size: 3.6em;
-  font-weight: 600;
+  /* lighter than the 600 it carried — at 3.6em the heavier weight sat
+     as a dense block against the body text beside it */
+  font-weight: 300;
   line-height: 0.82;
   color: var(--hero-bg);
   padding-right: 10px;
@@ -947,7 +969,20 @@ footer {
   background: #17181A;
   color: #FFFFFF;
 }
-footer .footer-top { padding-block: 64px 48px; align-items: start; }
+/* Sized to content rather than fixed grid columns (2026-09-01): the
+   nav used to sit in a 2-column slot, and "CONSULTANCY" at 15px +
+   2.5px tracking is ~135px, so that slot ran out at ~900px viewport
+   and dumped the whole footer into its stacked layout while there was
+   still plenty of room. As a flex row the three blocks take the width
+   they need and only wrap at ~680px, where it genuinely is tight. */
+footer .footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  padding-block: 64px 48px;
+}
 footer .footer-nav {
   grid-column: 6 / span 2;
   display: flex;
@@ -1038,7 +1073,71 @@ footer .copyright {
   :root { --margin: 20px; --gutter: 20px; }
   .back-to-top { right: 20px; bottom: 20px; width: 42px; height: 42px; }
   .wordmark { grid-column: 1 / -1; margin-bottom: 20px; }
+  /* The name has to share one row with the hamburger here, so it scales
+     down just enough to keep fitting: the string is ~13x its own font
+     size wide, and the row can spare (viewport - 40px margins - 30px
+     button - 16px gap), which is what this vw term tracks. Applied to
+     plain .wordmark so the footer's copy shrinks in step and the two
+     never differ. */
+  .wordmark { font-size: clamp(16px, calc(7.6vw - 7px), 24px); }
   nav { grid-column: 1 / -1; justify-content: flex-start; flex-wrap: wrap; gap: 24px; }
+
+  /* Header collapses to wordmark + hamburger on one row (2026-09-01).
+     Flex rather than the 10-col grid here: the bar only has two items
+     plus the nav panel, and flex-basis:100% on the nav is what drops it
+     onto its own full-width row when open, with no column arithmetic.
+     Scoped to "header nav"/"header .wordmark" so the footer's own
+     wordmark + .footer-nav (same element/class names) keep the stacked
+     treatment they already have below. */
+  header .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 16px;
+  }
+  header .wordmark { margin-bottom: 0; }
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* 20px-wide bars, tightened to 6px of air (was 8) so the three
+       lines read as one mark rather than three separate rules. The
+       button box stays 30px so the tap target doesn't shrink. */
+    gap: 6px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: currentColor;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  /* bar centres sit 7px apart (1px bar + 6px gap), so this folds the
+     outer two onto the middle line to make the X */
+  .nav-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  header nav {
+    display: none;
+    flex-basis: 100%;
+  }
+  header nav.is-open {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding-top: 28px;
+  }
   .hero-text,
   .hero-image,
   .body-copy {
@@ -1065,7 +1164,6 @@ footer .copyright {
   footer .social {
     grid-column: 1 / -1;
   }
-  footer .wordmark { margin-bottom: 24px; }
-  footer .footer-nav { flex-direction: row; flex-wrap: wrap; gap: 20px; margin-bottom: 24px; }
+  footer .footer-nav { flex-direction: row; flex-wrap: wrap; gap: 20px; }
   footer .social { justify-content: flex-start; }
 }
