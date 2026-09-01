@@ -91,7 +91,26 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
+  /* canvas colour — what a bottom rubber-band bounce reveals, so it
+     matches the footer (the element every page actually ends on). It
+     used to be the hero colour, which meant pulling past the end of an
+     article showed the category brand colour under the off-black
+     footer. The top of the page is handled by the fixed layer below. */
+  background: #17181A;
+}
+/* top overscroll needs the hero/header colour instead. The canvas can
+   only be one colour, so this is a second, fixed layer pinned to the
+   viewport top — behind the header at rest, only exposed when a bounce
+   pulls the document down past y=0. */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 240px;
   background: var(--hero-bg);
+  z-index: -1;
 }
 
 body {

@@ -115,9 +115,12 @@ body::before {
   background: var(--bg);
   z-index: -1;
 }
-/* matches the homepage header override above, so a rubber-band bounce
-   at the top of the page reveals the same tint, not the full colour */
-body.homepage::before {
+/* matches the pale header treatment, so a rubber-band bounce at the top
+   reveals the same tint rather than the full-strength colour. Covers
+   Consultancy and CV as well as the homepage — their headers went pale
+   too, but this layer was still painting the solid dark purple. */
+body.homepage::before,
+[data-category="about"]::before {
   background: var(--bg-tint);
 }
 
@@ -1276,6 +1279,11 @@ body.cv-page .cv-sidebar {
 }
 .cv-pubs li {
   line-height: 1.5;
+}
+/* the 'for a full list...' note reads as a separate aside, not as part
+   of the citation list it follows */
+.cv-pubs + p {
+  margin-top: 24px;
 }
 /* education entries are title + meta only, so they don't need the
    48px gap the described experience entries use */
