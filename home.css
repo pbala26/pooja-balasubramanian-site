@@ -751,6 +751,22 @@ body.homepage .about-bio .cv-divider {
 .bio-cta-link:hover {
   opacity: 0.7;
 }
+/* Phone widths: the address is wider than the column at the base scale,
+   so let the icon keep its own line and the address drop whole beneath
+   it (overflow-wrap back to normal stops the mid-word split), and take
+   the type down a step so it fits that line unbroken. Copy and link stay
+   the same size as each other. */
+@media (max-width: 560px) {
+  .bio-cta-link {
+    flex-wrap: wrap;
+    row-gap: 2px;
+    overflow-wrap: normal;
+  }
+  .bio-cta .bio-cta-copy,
+  .bio-cta-link {
+    font-size: clamp(14px, calc(5.6vw - 2px), 24px);
+  }
+}
 .about-bio p + p {
   margin-top: 24px;
 }
