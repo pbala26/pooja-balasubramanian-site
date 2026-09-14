@@ -636,6 +636,25 @@ body.homepage .substack-box {
   opacity: 0.6;
   padding: 12px;
 }
+/* portrait fills the bubble: the img is cropped square already, so
+   object-fit:cover just guards against any future non-square file.
+   overflow:hidden clips it to the circle; padding/opacity from the
+   placeholder rule above are cancelled. */
+.photo-bubble:has(img) {
+  padding: 0;
+  opacity: 1;
+  overflow: hidden;
+  border: none;
+}
+.photo-bubble img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: 50%;
+}
+
 /* .about-bio also carries the CV page's own .cv-main class, reusing
    its grid-column:4/span5 + position:relative + .cv-divider (the
    small-column/line/text rhythm from the CV page's sidebar/divider/
