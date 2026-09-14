@@ -66,6 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let lineEls = [];
   let curvature = [];
   let motion = [];
+  // where each box was placed this layout pass, in px within the hero —
+  // used to cap how far it can wander before the hero's edge clips it
+  let placement = [];
   let lastWidth = null;
 
   // .hero-node-inner is the element that actually carries the visible
@@ -175,6 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
       node.style.left = `${((px / W) * 100).toFixed(2)}%`;
       node.style.top = `${((py / H) * 100).toFixed(2)}%`;
       node.style.visibility = 'visible';
+      // Remember where this box landed and how big it is: the wander
+      // amplitude below is clamped per box to the room it actually has
+      // before the hero's overflow:hidden would clip it.
+      placement[i] = { px, py, w, h };
     });
 
     // --- connecting lines ------------------------------------------------
@@ -198,20 +205,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // smaller secondary sine at the golden-ratio multiple of the primary
     // frequency, so the combined path is quasi-periodic (never quite
     // repeats) instead of a simple ellipse, while staying perfectly
-    // smooth. Travel is ~13–23px per axis (2026-09-14): the old ~7–13px
-    // was small enough that a box sitting near a word just hovered over
-    // it instead of clearing it. Period scales up with the amplitude
-    // (~36–60s per box, was ~20–34s) so peak speed is unchanged — the
-    // boxes cover more ground at the same slow drift, not faster.
-    // Narrow screens keep a reduced scale, since the same travel eats a
-    // much larger share of a phone's column width.
+    // smooth.
+    //
+    // Travel is ~24–40px per axis (2026-09-14, up from ~7–13px): the
+    // point of the drift is that a tag parked over a headline word
+    // clears it again, and a few px of hover never did that. Period
+    // scales with amplitude so peak speed stays in the same slow range
+    // rather than rising with the distance.
+    //
+    // Because the two sines sum, worst-case excursion is 1.4x the
+    // amplitude, and the hero clips at its own edge (overflow:hidden),
+    // so each box's amplitude is capped by the gap between where it
+    // landed and the hero edge. Boxes near the edge move less; the ones
+    // in the middle — the ones actually sitting on the headline — get
+    // the full range. Narrow screens scale down: the same travel is a
+    // much larger share of a phone's width.
     const ampScale = narrow ? 0.7 : 1;
-    motion = nodes.map(() => {
-      const periodX = 36 + Math.random() * 24;
-      const periodY = 36 + Math.random() * 24;
+    const SUM_PEAK = 1.4; // primary + 0.4x secondary, both at their max
+    motion = nodes.map((_, i) => {
+      const pl = placement[i] || { px: W / 2, py: H / 2, w: 0, h: 0 };
+      const slackX = Math.max(0, Math.min(pl.px - pl.w / 2, W - pl.px - pl.w / 2) - 4);
+      const slackY = Math.max(0, Math.min(pl.py - pl.h / 2, H - pl.py - pl.h / 2) - 4);
+      const wantX = (24 + Math.random() * 16) * ampScale;
+      const wantY = (24 + Math.random() * 16) * ampScale;
+      const ampX = Math.min(wantX, slackX / SUM_PEAK);
+      const ampY = Math.min(wantY, slackY / SUM_PEAK);
+      // 2.2s of period per px of amplitude keeps the drift at the same
+      // unhurried pace whatever distance a given box ended up with.
+      const periodX = Math.max(18, ampX * 2.2);
+      const periodY = Math.max(18, ampY * 2.2);
       return {
-        ampX: (13 + Math.random() * 10) * ampScale,
-        ampY: (13 + Math.random() * 10) * ampScale,
+        ampX,
+        ampY,
         wX: (Math.PI * 2) / periodX,
         wY: (Math.PI * 2) / periodY,
         w2X: ((Math.PI * 2) / periodX) * GOLDEN,
