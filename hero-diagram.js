@@ -230,10 +230,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const wantY = (24 + Math.random() * 16) * ampScale;
       const ampX = Math.min(wantX, slackX / SUM_PEAK);
       const ampY = Math.min(wantY, slackY / SUM_PEAK);
-      // 2.2s of period per px of amplitude keeps the drift at the same
-      // unhurried pace whatever distance a given box ended up with.
-      const periodX = Math.max(18, ampX * 2.2);
-      const periodY = Math.max(18, ampY * 2.2);
+      // Seconds of period per px of amplitude — the pace, in other
+      // words, held constant whatever distance a given box ended up
+      // with. Raised from 2.2 to 4.4 on 2026-09-14: same travel, half
+      // the speed.
+      const periodX = Math.max(30, ampX * 4.4);
+      const periodY = Math.max(30, ampY * 4.4);
       return {
         ampX,
         ampY,
