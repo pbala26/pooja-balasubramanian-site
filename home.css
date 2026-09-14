@@ -1769,6 +1769,14 @@ footer .copyright {
      Applied to plain .wordmark so the footer's copy shrinks in step
      and the two never differ. */
   .wordmark { font-size: clamp(14px, calc(4.2vw + 1px), 19px); }
+  /* Desktop-only hero breaks (2026-09-14): the headline's rag is set by
+     hand above 900px, but on a phone the column is far too narrow for
+     those breaks to mean anything, so they switch off and the line
+     wraps to the measure. display:none on a <br> stops it breaking;
+     the source keeps a space before each one so the words either side
+     don't run together once it's off (the space collapses at the end
+     of a line on desktop, so it costs nothing there). */
+  .hero-br { display: none; }
   nav { grid-column: 1 / -1; justify-content: flex-start; flex-wrap: wrap; }
 
   /* Header collapses to wordmark + hamburger on one row (2026-09-01).
