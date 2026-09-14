@@ -1304,8 +1304,13 @@ body.cv-page .cv-sidebar {
 body.cv-page .consultancy-list .bio-cta {
   grid-row: 2;
 }
-@media (max-width: 1150px) {
-  /* margin's gone — the bubble sits at the top of the column instead */
+/* The bubble keeps its own breakpoint, lower than the CV side column's
+   1150px below. It only needs room in the left margin, which is still
+   there at 1100-1150 — sharing the side column's breakpoint made it
+   jump above the text while there was plenty of space beside it. Below
+   1100 the margin leaves it under ~90px, too small to be worth it, so
+   it goes to the top of the column instead. */
+@media (max-width: 1100px) {
   .photo-bubble {
     grid-row: auto;
     grid-column: 1 / -1;
@@ -1317,6 +1322,19 @@ body.cv-page .consultancy-list .bio-cta {
   }
   body.homepage .about-bio.cv-main {
     grid-row: auto;
+  }
+}
+
+@media (max-width: 1150px) {
+  /* the CV's whole grid reflows here, so its bubble has to come along —
+     left in row 1 it would sit alone above everything. The homepage has
+     no side column, so its bubble holds on until 1100 (block above). */
+  body.cv-page .photo-bubble {
+    grid-row: auto;
+    grid-column: 1 / -1;
+    order: 0;
+    width: 160px;
+    margin: 0 auto 64px max(0px, calc((100% - 670px) / 2));
   }
   body.cv-page .consultancy-body,
   body.cv-page .cv-sidebar {
