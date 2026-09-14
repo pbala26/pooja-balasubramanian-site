@@ -11,6 +11,7 @@
 // into dist/, which is what actually gets deployed. Zero dependencies.
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
@@ -44,6 +45,32 @@ function readPartial(name) {
 
 function resolveIncludes(html) {
   return html.replace(INCLUDE_RE, (_, name) => readPartial(name));
+}
+
+// Cache-busting (2026-09-14). The CSS and JS filenames never change, so
+// a CDN or a browser that has cached home.css keeps serving the old one
+// after a deploy — the HTML updates, the styles don't, and the site
+// looks half-shipped. Every local .css/.js reference gets ?v=<hash of
+// that file's contents> appended, so the URL changes only when the file
+// does. External URLs (fonts, anything with //) are left alone.
+const ASSET_REF_RE = /\b(href|src)="([\w./-]+\.(?:css|js))"/g;
+const hashCache = new Map();
+function assetHash(rel) {
+  if (hashCache.has(rel)) return hashCache.get(rel);
+  const file = path.join(ROOT, rel);
+  let h = '';
+  if (fs.existsSync(file)) {
+    h = crypto.createHash('md5').update(fs.readFileSync(file)).digest('hex').slice(0, 8);
+  }
+  hashCache.set(rel, h);
+  return h;
+}
+function fingerprintAssets(html) {
+  return html.replace(ASSET_REF_RE, (whole, attr, ref) => {
+    if (ref.includes('//')) return whole;
+    const h = assetHash(ref);
+    return h ? `${attr}="${ref}?v=${h}"` : whole;
+  });
 }
 
 // Related articles: no curation, no "similarity" logic — just a random
@@ -147,6 +174,7 @@ function copyTree(srcDir, destDir) {
       const ok = safeWrite(destPath, () => {
         let html = resolveIncludes(fs.readFileSync(srcPath, 'utf8'));
         html = resolveRelated(html, relHref);
+        html = fingerprintAssets(html);
         fs.writeFileSync(destPath, html);
       });
       ok ? fileCount++ : skipped++;

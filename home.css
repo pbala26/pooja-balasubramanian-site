@@ -131,6 +131,18 @@ body.homepage::before,
   background: var(--bg-tint);
 }
 
+/* Seam guard (2026-09-14). The canvas behind everything is off-black,
+   so wherever two pale sections meet on a fractional device-pixel
+   boundary — a scaled display, a browser zoom — the rounding leaves a
+   sub-pixel gap and the dark canvas shows through it as a hairline
+   rule above and below the hero band. Painting the tint on the body
+   box itself means any such gap reveals the tint instead. html keeps
+   the off-black, so a bottom rubber-band bounce is unaffected. */
+body.homepage,
+body[data-category="about"] {
+  background: var(--bg-tint);
+}
+
 body {
   font-family: "Work Sans", sans-serif;
   font-weight: 400;
