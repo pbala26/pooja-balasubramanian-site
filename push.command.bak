@@ -1,0 +1,24 @@
+#!/bin/bash
+# Double-click to build + push to main, which triggers the GitHub Actions
+# deploy to Cloudflare Pages. Runs on the Mac itself, so it uses your
+# normal GitHub SSO credentials.
+cd "$(dirname "$0")" || exit 1
+echo "→ $(pwd)"
+node build.js || exit 1
+git status --short
+if git diff --quiet && git diff --cached --quiet && [ -z "$(git status --porcelain)" ]; then
+  echo "No uncommitted changes."
+else
+  echo
+  read -r -p "Commit message (blank = skip committing): " MSG
+  if [ -n "$MSG" ]; then
+    git add -A
+    git commit -m "$MSG" || exit 1
+  fi
+fi
+echo
+echo "→ pushing to origin/main"
+git push origin main || { echo "PUSH FAILED"; read -r -p "Press return to close."; exit 1; }
+echo
+echo "✓ pushed — deploy running at https://github.com/pbala26/pooja-balasubramanian-site/actions"
+read -r -p "Press return to close."

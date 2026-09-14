@@ -650,9 +650,18 @@ body.homepage .substack-box {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
   display: block;
   border-radius: 50%;
+  /* Framing is done with a transform, not object-position: the photo and
+     the bubble are both square, so there is no overflow for
+     object-position to shift — it does nothing here. Zooming instead
+     crops in the browser from the full 440px original, which stays
+     sharper than shipping a pre-cropped, upscaled file.
+     Tuned to THIS photo (face sits at 50%/34% of the frame): the origin
+     zooms about her face, the translate drops it to ~42% down and
+     nudges her off the left. Re-tune both if the photo is replaced. */
+  transform-origin: 50% 34%;
+  transform: translate(3%, 8%) scale(1.45);
 }
 
 /* .about-bio also carries the CV page's own .cv-main class, reusing
