@@ -27,6 +27,7 @@ const CATEGORY_RE = /<body[^>]*\bdata-category="([\w-]+)"/;
 const SKIP = new Set([
   'dist', 'partials', 'node_modules', '.git', '.github', '.wrangler',
   'server.js', 'build.js', 'package.json', 'package-lock.json', '.gitignore',
+  'push.command',
 ]);
 
 const partialCache = new Map();
