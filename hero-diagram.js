@@ -198,18 +198,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // smaller secondary sine at the golden-ratio multiple of the primary
     // frequency, so the combined path is quasi-periodic (never quite
     // repeats) instead of a simple ellipse, while staying perfectly
-    // smooth. Period ~20–34s per box — slow and gentle, never a sharp
-    // swing. Amplitude is scaled down on narrow screens: the same
-    // ~7–13px drift that reads as a gentle float on a wide hero eats a
-    // much larger share of a phone's column width and starts to read as
-    // boxes colliding.
-    const ampScale = narrow ? 0.55 : 1;
+    // smooth. Travel is ~13–23px per axis (2026-09-14): the old ~7–13px
+    // was small enough that a box sitting near a word just hovered over
+    // it instead of clearing it. Period scales up with the amplitude
+    // (~36–60s per box, was ~20–34s) so peak speed is unchanged — the
+    // boxes cover more ground at the same slow drift, not faster.
+    // Narrow screens keep a reduced scale, since the same travel eats a
+    // much larger share of a phone's column width.
+    const ampScale = narrow ? 0.7 : 1;
     motion = nodes.map(() => {
-      const periodX = 20 + Math.random() * 14;
-      const periodY = 20 + Math.random() * 14;
+      const periodX = 36 + Math.random() * 24;
+      const periodY = 36 + Math.random() * 24;
       return {
-        ampX: (7 + Math.random() * 6) * ampScale,
-        ampY: (7 + Math.random() * 6) * ampScale,
+        ampX: (13 + Math.random() * 10) * ampScale,
+        ampY: (13 + Math.random() * 10) * ampScale,
         wX: (Math.PI * 2) / periodX,
         wY: (Math.PI * 2) / periodY,
         w2X: ((Math.PI * 2) / periodX) * GOLDEN,

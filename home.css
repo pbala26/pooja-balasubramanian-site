@@ -1751,12 +1751,12 @@ footer .copyright {
   nav { gap: 24px; }
   .wordmark { grid-column: 1 / -1; margin-bottom: 20px; }
   /* The name has to share one row with the hamburger here, so it scales
-     down just enough to keep fitting: the string is ~13x its own font
-     size wide, and the row can spare (viewport - 40px margins - 30px
-     button - 16px gap), which is what this vw term tracks. Applied to
-     plain .wordmark so the footer's copy shrinks in step and the two
-     never differ. */
-  .wordmark { font-size: clamp(16px, calc(7.6vw - 7px), 24px); }
+     down: it only ever needed to fit, and at phone widths the full
+     24px read as oversized next to everything else in the bar, so the
+     ceiling drops to 21px and the vw term is gentler (2026-09-14).
+     Applied to plain .wordmark so the footer's copy shrinks in step
+     and the two never differ. */
+  .wordmark { font-size: clamp(15px, calc(4.6vw + 1px), 21px); }
   nav { grid-column: 1 / -1; justify-content: flex-start; flex-wrap: wrap; }
 
   /* Header collapses to wordmark + hamburger on one row (2026-09-01).
