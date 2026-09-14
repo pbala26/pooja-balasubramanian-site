@@ -1756,7 +1756,7 @@ footer .copyright {
      ceiling drops to 21px and the vw term is gentler (2026-09-14).
      Applied to plain .wordmark so the footer's copy shrinks in step
      and the two never differ. */
-  .wordmark { font-size: clamp(15px, calc(4.6vw + 1px), 21px); }
+  .wordmark { font-size: clamp(14px, calc(4.2vw + 1px), 19px); }
   nav { grid-column: 1 / -1; justify-content: flex-start; flex-wrap: wrap; }
 
   /* Header collapses to wordmark + hamburger on one row (2026-09-01).
