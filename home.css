@@ -21,6 +21,11 @@
    categories with their own correct colours.
    ============================================================ */
 :root {
+  /* The site is light-on-pale throughout. Declaring this stops an
+     in-app browser (WhatsApp, Instagram etc — all WKWebView) from
+     deciding to render the page with a dark UA appearance. */
+  color-scheme: light;
+
   --margin: 40px;
   --gutter: 40px;
   --cols: 10;
@@ -61,7 +66,16 @@
 [data-category="workshop"]   { --bg: #1B3720; --fg: #FFFFFF; --bg-tint: #D1D7D2; } /* Education — Green */
 [data-category="exhibition"] { --bg: #FF8D3C; --fg: #1E1E1E; --bg-tint: #FFE8D8; } /* Exhibition — Ochre */
 [data-category="film"]       { --bg: #FF564B; --fg: #1E1E1E; --bg-tint: #FFDDDB; } /* Film — Orange */
-[data-category="about"]      { --bg: #24105D; --fg: #FFFFFF; --bg-tint: color-mix(in srgb, var(--hero-purple) 20%, white); } /* About/CV — Purple (2026-09-01: unified with homepage tint formula, nudged a little more saturated so Consultancy/CV read pale purple rather than pale grey) */
+/* 2026-09-18: --bg-tint here was a color-mix() of --hero-purple. Because
+   it carried a var(), an engine without color-mix() couldn't drop the
+   declaration at parse time — it went invalid at computed-value time
+   instead, so every `background: var(--bg-tint)` on these pages fell to
+   transparent and revealed html's off-black canvas under #1E1E1E text.
+   Reported on an iPhone 14 in WhatsApp's in-app browser (WKWebView, so
+   system WebKit). The mix has no dynamic input, so it's now the literal
+   result — same value, same 20% formula, matching the four categories
+   above. Don't put it back behind color-mix(). */
+[data-category="about"]      { --bg: #24105D; --fg: #FFFFFF; --bg-tint: #D3CFDF; } /* About/CV — Purple (2026-09-01: unified with homepage tint formula, nudged a little more saturated so Consultancy/CV read pale purple rather than pale grey) */
 
 /* Homepage-only background — a soft 15% tint of purple (--hero-purple)
    rather than a tint of --bg (which would be Wine, since body carries
@@ -73,7 +87,8 @@
    touching the locked 20% tint used everywhere else on the site
    (category listing headers, .subcategory, .cv-body, etc). */
 body.homepage {
-  --bg-tint: color-mix(in srgb, var(--hero-purple) 20%, white);
+  /* literal for the same reason as [data-category="about"] above */
+  --bg-tint: #D3CFDF;
   /* Single source for the hero band's vertical rhythm (2026-09-01).
      Everything around the big statement is derived from this one
      value so the gaps have a stated logic instead of being whatever
@@ -1162,8 +1177,18 @@ body.homepage .about-bio .cv-divider {
    so the list reads as its own band below the intro rather than the
    page being one flat wash top to bottom. */
 .consultancy-list {
-  background: color-mix(in srgb, var(--bg-tint) 50%, white);
+  /* Literal 50% tint of --bg-tint (#D3CFDF) for the About pages this
+     band actually appears on, so the section still paints if
+     color-mix() isn't available; the @supports block below restores
+     the derived version wherever it is, so other categories keep
+     tinting from their own --bg-tint. */
+  background: #E9E7EF;
   color: #1E1E1E;
+}
+@supports (background: color-mix(in srgb, red 50%, white)) {
+  .consultancy-list {
+    background: color-mix(in srgb, var(--bg-tint) 50%, white);
+  }
 }
 .consultancy-list .grid {
   /* bottom matches the homepage's about section exactly — same clamp,
